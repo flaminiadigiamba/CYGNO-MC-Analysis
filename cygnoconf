@@ -1,0 +1,10 @@
+CYGNO_gas_mass 1.7 
+externalflux 1
+externalflux_value 0.56 
+shield0_thickness 0.01
+shield1_thickness 0.01
+shield2_thickness 0.50
+shield3_thickness 0.05
+smearing 0
+filelist list_new.txt 
+root_out prova_cygno_drift.root
