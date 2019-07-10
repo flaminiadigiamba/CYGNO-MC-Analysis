@@ -228,9 +228,9 @@ void CYGNOAnalysis::Loop()
             //b_E_pos->GetEntry(jentry);
             //b_E_pro->GetEntry(jentry);
             //b_E_ion->GetEntry(jentry);
-            //b_poststepx_ele->GetEntry(jentry);
-            //b_poststepy_ele->GetEntry(jentry);
-            //b_poststepz_ele->GetEntry(jentry);
+            b_poststepx_ele->GetEntry(jentry);
+            b_poststepy_ele->GetEntry(jentry);
+            b_poststepz_ele->GetEntry(jentry);
             //b_poststepx_pos->GetEntry(jentry);
             //b_poststepy_pos->GetEntry(jentry);
             //b_poststepz_pos->GetEntry(jentry);
@@ -293,10 +293,10 @@ void CYGNOAnalysis::Loop()
         
               }
 
-              ////FIXME : double counting due to non-primary electrons 
-              //for (int iele = 0; iele < E_ele->size(); iele++){
-	      //        h3_xyz_ele->Fill(poststepx_ele->at(iele),poststepy_ele->at(iele),poststepz_ele->at(iele));	
-              //}
+             //FIXME : double counting due to non-primary electrons 
+             for (int iele = 0; iele < E_ele->size(); iele++){
+	             h3_xyz_ele->Fill(poststepx_ele->at(iele),poststepy_ele->at(iele),poststepz_ele->at(iele));	
+             }
               //for (int ipos = 0; ipos < E_pos->size(); ipos++){
 	      //        h3_xyz_pos->Fill(poststepx_pos->at(ipos),poststepy_pos->at(ipos),poststepz_pos->at(ipos));	
               //}
@@ -363,6 +363,9 @@ void CYGNOAnalysis::Normalize(){
     Double_t AirBox_x = 1.45;
     Double_t AirBox_y = 1.45;
     Double_t AirBox_z = 2.45; //here x and z swiped wrt CYGNODetectorConstruction 
+    //Double_t AirBox_x = 2;
+    //Double_t AirBox_y = 2;
+    //Double_t AirBox_z = 3; //here x and z swiped wrt CYGNODetectorConstruction 
      
     Double_t ndays;
     if (!_externalflux){
@@ -375,6 +378,8 @@ void CYGNOAnalysis::Normalize(){
     } 
     binwitdh = h_edepDet_norm->GetBinWidth(1);
     norm = 1./(ndays*binwitdh*_CYGNO_gas_mass);
+    h_edepDet_norm->Scale(norm);
+    //normalized to cpd/kg/keV
 
     binwitdh_full = h_edepDet_full_norm->GetBinWidth(1);
     normfull = 1./(ndays*binwitdh_full*_CYGNO_gas_mass);
