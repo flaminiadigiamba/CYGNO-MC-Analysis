@@ -106,6 +106,7 @@ void CYGNOAnalysis::SetHistograms(){
     h_E_pro_full_norm = new TH1D("h_E_pro_full_norm","",600,0,3000);
 
     h3_xyz_ele = new TH3D("h3_xyx_ele","",100,-600,600,100,-600,600,100,-600,600);
+    h3_xyz_ele_fiducial = new TH3D("h3_xyx_ele_fiducial","",100,-600,600,100,-600,600,100,-600,600);
     h3_xyz_pos = new TH3D("h3_xyx_pos","",100,-600,600,100,-600,600,600,-600,600);
     h3_xyz_pro = new TH3D("h3_xyx_pro","",100,-600,600,100,-600,600,600,-600,600);
 
@@ -173,7 +174,8 @@ void CYGNOAnalysis::Loop()
 {
     Long64_t  events = 0;
     _total_events = 0;
-    
+    _total_flux_events = 0.;   
+ 
     Long64_t nentries;
    
     cout<< "Setting histograms" << endl;  
@@ -224,7 +226,9 @@ void CYGNOAnalysis::Loop()
             //b_px_flu->GetEntry(jentry);
             //b_py_flu->GetEntry(jentry);
             //b_pz_flu->GetEntry(jentry);
-            //b_E_ele->GetEntry(jentry);
+            b_E_ele->GetEntry(jentry);
+            b_parentid_ele->GetEntry(jentry);
+            b_trackid_ele->GetEntry(jentry);
             //b_E_pos->GetEntry(jentry);
             //b_E_pro->GetEntry(jentry);
             //b_E_ion->GetEntry(jentry);
@@ -295,8 +299,24 @@ void CYGNOAnalysis::Loop()
 
              //FIXME : double counting due to non-primary electrons 
              for (int iele = 0; iele < E_ele->size(); iele++){
-	             h3_xyz_ele->Fill(poststepx_ele->at(iele),poststepy_ele->at(iele),poststepz_ele->at(iele));	
-             }
+                     Bool_t doublecount = false;
+	             if(iele!=0 && parentid_ele->at(iele)!=trackid_ele->at(iele-1) && parentid_ele->at(iele)!=parentid_ele->at(iele-1)) {
+                         // method to be checked...
+                         //for (int jele=0; jele<iele; jele++){
+                         //    if(parentid_ele->at(iele)==trackid_ele->at(jele)){
+                         //        doublecount = true;
+                         //        break;
+                         //    }
+                         //}
+                         if (!doublecount){
+                             h3_xyz_ele->Fill(poststepx_ele->at(iele),poststepy_ele->at(iele),poststepz_ele->at(iele));	
+                             
+                             if (TMath::Abs(poststepx_ele->at(iele))<510 && TMath::Abs(poststepy_ele->at(iele))<510 && TMath::Abs(poststepz_ele->at(iele))<510 ){
+	                          h3_xyz_ele_fiducial->Fill(poststepx_ele->at(iele),poststepy_ele->at(iele),poststepz_ele->at(iele));	
+		             }
+                         }
+                     }
+              }
               //for (int ipos = 0; ipos < E_pos->size(); ipos++){
 	      //        h3_xyz_pos->Fill(poststepx_pos->at(ipos),poststepy_pos->at(ipos),poststepz_pos->at(ipos));	
               //}
@@ -317,15 +337,15 @@ void CYGNOAnalysis::Loop()
              }	    
 	} //end loop on entries
         
-        if (_externalflux){
-            _total_flux_events += h_EprimaryShield0->GetEntries();
-        }    
-
 	delete mytree;
         delete fopen;
         //delete n_event_gen;
     } //end loop on files
     
+    if (_externalflux){
+        _total_flux_events += h_EprimaryShield0->GetEntries();
+    }    
+
 
     this->Normalize();
     this->ComputeBKG();

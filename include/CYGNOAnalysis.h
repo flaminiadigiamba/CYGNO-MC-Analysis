@@ -112,6 +112,7 @@ protected :
     TH1D *h_E_ion_full_norm;
 
     TH3D *h3_xyz_ele;
+    TH3D *h3_xyz_ele_fiducial;
     TH3D *h3_xyz_pos;
     TH3D *h3_xyz_pro;
     TH3D *h3_xyz_ion;
