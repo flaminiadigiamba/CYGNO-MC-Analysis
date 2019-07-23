@@ -13,7 +13,7 @@
 #include <list>
 #include <sstream>
 
-
+using namespace std;
 
 void CYGNOAnalysis::Config(string config_file){
     
@@ -60,36 +60,74 @@ void CYGNOAnalysis::SetHistograms(){
     h_edepDet_full = new TH1D("h_edepDet_full","edepDet-full",600,0,3000);
     h_edepDet_full_norm = new TH1D("h_edepDet_full_norm","edepDet-full-norm",600,0,3000);
 
-    h_EprimaryShield0 = new TH1D("h_EprimaryShield0","",600,0,120);
-    h_EprimaryShield0_norm = new TH1D("h_EprimaryShield0_norm","",600,0,120);
-    h_EprimaryShield0_full = new TH1D("h_EprimaryShield0_full","",600,0,3000);
-    h_EprimaryShield0_full_norm = new TH1D("h_EprimaryShield0_full_norm","",600,0,3000);
+    h_EgammaShield0 = new TH1D("h_EgammaShield0","",600,0,120);
+    h_EgammaShield0_norm = new TH1D("h_EgammaShield0_norm","",600,0,120);
+    h_EgammaShield0_full = new TH1D("h_EgammaShield0_full","",600,0,3000);
+    h_EgammaShield0_full_norm = new TH1D("h_EgammaShield0_full_norm","",600,0,3000);
 
-    h_EprimaryShield1 = new TH1D("h_EprimaryShield1","",600,0,120);
-    h_EprimaryShield1_norm = new TH1D("h_EprimaryShield1_norm","",600,0,120);
-    h_EprimaryShield1_full = new TH1D("h_EprimaryShield1_full","",600,0,3000);
-    h_EprimaryShield1_full_norm = new TH1D("h_EprimaryShield1_full_norm","",600,0,3000);
+    h_EgammaShield1 = new TH1D("h_EgammaShield1","",600,0,120);
+    h_EgammaShield1_norm = new TH1D("h_EgammaShield1_norm","",600,0,120);
+    h_EgammaShield1_full = new TH1D("h_EgammaShield1_full","",600,0,3000);
+    h_EgammaShield1_full_norm = new TH1D("h_EgammaShield1_full_norm","",600,0,3000);
 
-    h_EprimaryShield2 = new TH1D("h_EprimaryShield2","",600,0,120);
-    h_EprimaryShield2_norm = new TH1D("h_EprimaryShield2_norm","",600,0,120);
-    h_EprimaryShield2_full = new TH1D("h_EprimaryShield2_full","",600,0,3000);
-    h_EprimaryShield2_full_norm = new TH1D("h_EprimaryShield2_full_norm","",600,0,3000);
+    h_EgammaShield2 = new TH1D("h_EgammaShield2","",600,0,120);
+    h_EgammaShield2_norm = new TH1D("h_EgammaShield2_norm","",600,0,120);
+    h_EgammaShield2_full = new TH1D("h_EgammaShield2_full","",600,0,3000);
+    h_EgammaShield2_full_norm = new TH1D("h_EgammaShield2_full_norm","",600,0,3000);
 
-    h_EprimaryShield3 = new TH1D("h_EprimaryShield3","",600,0,120);
-    h_EprimaryShield3_norm = new TH1D("h_EprimaryShield3_norm","",600,0,120);
-    h_EprimaryShield3_full = new TH1D("h_EprimaryShield3_full","",600,0,3000);
-    h_EprimaryShield3_full_norm = new TH1D("h_EprimaryShield3_full_norm","",600,0,3000);
+    h_EgammaShield3 = new TH1D("h_EgammaShield3","",600,0,120);
+    h_EgammaShield3_norm = new TH1D("h_EgammaShield3_norm","",600,0,120);
+    h_EgammaShield3_full = new TH1D("h_EgammaShield3_full","",600,0,3000);
+    h_EgammaShield3_full_norm = new TH1D("h_EgammaShield3_full_norm","",600,0,3000);
 
-    h_EprimaryAirBox = new TH1D("h_EprimaryAirBox","",600,0,120);
-    h_EprimaryAirBox_norm = new TH1D("h_EprimaryAirBox_norm","",600,0,120);
-    h_EprimaryAirBox_full = new TH1D("h_EprimaryAirBox_full","",600,0,3000);
-    h_EprimaryAirBox_full_norm = new TH1D("h_EprimaryAirBox_full_norm","",600,0,3000);
+    h_EgammaAirBox = new TH1D("h_EgammaAirBox","",600,0,120);
+    h_EgammaAirBox_norm = new TH1D("h_EgammaAirBox_norm","",600,0,120);
+    h_EgammaAirBox_full = new TH1D("h_EgammaAirBox_full","",600,0,3000);
+    h_EgammaAirBox_full_norm = new TH1D("h_EgammaAirBox_full_norm","",600,0,3000);
 
     h_EallAirBox = new TH1D("h_EallAirBox","",600,0,120);
     h_EallAirBox_norm = new TH1D("h_EallAirBox_norm","",600,0,120);
     h_EallAirBox_full = new TH1D("h_EallAirBox_full","",600,0,3000);
     h_EallAirBox_full_norm = new TH1D("h_EallAirBox_full_norm","",600,0,3000);
 
+   // h_AbsPxShield0 = new TH1D("h_AbsPxShield0","",600,-1,1);
+   // h_AbsPyShield0 = new TH1D("h_AbsPyShield0","",600,-1,1);
+   // h_AbsPzShield0 = new TH1D("h_AbsPzShield0","",600,-1,1);
+   // 
+   // h_AbsPxShield1 = new TH1D("h_AbsPxShield1","",600,-1,1);
+   // h_AbsPyShield1 = new TH1D("h_AbsPyShield1","",600,-1,1);
+   // h_AbsPzShield1 = new TH1D("h_AbsPzShield1","",600,-1,1);
+   // 
+   // h_AbsPxShield2 = new TH1D("h_AbsPxShield2","",600,-1,1);
+   // h_AbsPyShield2 = new TH1D("h_AbsPyShield2","",600,-1,1);
+   // h_AbsPzShield2 = new TH1D("h_AbsPzShield2","",600,-1,1);
+
+   // h_AbsPxShield3 = new TH1D("h_AbsPxShield3","",600,-1,1);
+   // h_AbsPyShield3 = new TH1D("h_AbsPyShield3","",600,-1,1);
+   // h_AbsPzShield3 = new TH1D("h_AbsPzShield3","",600,-1,1);
+   // 
+   // h_AbsPxAirBox = new TH1D("h_AbsPxAirBox","",600,-1,1);
+   // h_AbsPyAirBox = new TH1D("h_AbsPyAirBox","",600,-1,1);
+   // h_AbsPzAirBox = new TH1D("h_AbsPzAirBox","",600,-1,1);
+    
+    h_ThetaShield0 = new TH1D("h_ThetaShield0","",120,0,TMath::Pi());
+    h_PhiShield0   = new TH1D("h_PhiShield0","",120,0,2*TMath::Pi()); 
+    
+    h_ThetaShield1= new TH1D("h_ThetaShield1","",120,0,TMath::Pi());
+    h_PhiShield1  = new TH1D("h_PhiShield1","",120,0,2*TMath::Pi());
+    
+    h_ThetaShield2= new TH1D("h_ThetaShield2","",120,0,TMath::Pi());
+    h_PhiShield2 = new TH1D("h_PhiShield2","",120,0,2*TMath::Pi());
+
+    
+    h_ThetaShield3= new TH1D("h_ThetaShield3","",120,0,TMath::Pi());
+    h_PhiShield3 = new TH1D("h_PhiShield3","",120,0,2*TMath::Pi());
+
+    
+    h_ThetaAirBox= new TH1D("h_ThetaAirBox","",120,0,TMath::Pi());
+    h_PhiAirBox = new TH1D("h_PhiAirBox","",120,0,2*TMath::Pi());
+
+    
     h_E_ele = new TH1D("h_E_ele","",600,0,120);
     h_E_ele_norm = new TH1D("h_E_ele_norm","",600,0,120);
     h_E_ele_full = new TH1D("h_E_ele_full","",600,0,3000);
@@ -106,6 +144,7 @@ void CYGNOAnalysis::SetHistograms(){
     h_E_pro_full_norm = new TH1D("h_E_pro_full_norm","",600,0,3000);
 
     h3_xyz_ele = new TH3D("h3_xyx_ele","",100,-600,600,100,-600,600,100,-600,600);
+    h3_xyz_ele_fiducial = new TH3D("h3_xyx_ele_fiducial","",100,-600,600,100,-600,600,100,-600,600);
     h3_xyz_pos = new TH3D("h3_xyx_pos","",100,-600,600,100,-600,600,600,-600,600);
     h3_xyz_pro = new TH3D("h3_xyx_pro","",100,-600,600,100,-600,600,600,-600,600);
 
@@ -115,30 +154,67 @@ void CYGNOAnalysis::SetHistograms(){
     h_edepDet_full->Sumw2();
     h_edepDet_full_norm->Sumw2();
 
-    h_EprimaryShield0->Sumw2();
-    h_EprimaryShield0_norm->Sumw2(); 
-    h_EprimaryShield0_full->Sumw2();    
-    h_EprimaryShield0_full_norm->Sumw2();
+    h_EgammaShield0->Sumw2();
+    h_EgammaShield0_norm->Sumw2(); 
+    h_EgammaShield0_full->Sumw2();    
+    h_EgammaShield0_full_norm->Sumw2();
 
-    h_EprimaryShield1->Sumw2();
-    h_EprimaryShield1_norm->Sumw2(); 
-    h_EprimaryShield1_full->Sumw2();    
-    h_EprimaryShield1_full_norm->Sumw2();
+    h_EgammaShield1->Sumw2();
+    h_EgammaShield1_norm->Sumw2(); 
+    h_EgammaShield1_full->Sumw2();    
+    h_EgammaShield1_full_norm->Sumw2();
     
-    h_EprimaryShield2->Sumw2();
-    h_EprimaryShield2_norm->Sumw2(); 
-    h_EprimaryShield2_full->Sumw2();    
-    h_EprimaryShield2_full_norm->Sumw2();
+    h_EgammaShield2->Sumw2();
+    h_EgammaShield2_norm->Sumw2(); 
+    h_EgammaShield2_full->Sumw2();    
+    h_EgammaShield2_full_norm->Sumw2();
 
-    h_EprimaryShield3->Sumw2();
-    h_EprimaryShield3_norm->Sumw2(); 
-    h_EprimaryShield3_full->Sumw2();    
-    h_EprimaryShield3_full_norm->Sumw2();
+    h_EgammaShield3->Sumw2();
+    h_EgammaShield3_norm->Sumw2(); 
+    h_EgammaShield3_full->Sumw2();    
+    h_EgammaShield3_full_norm->Sumw2();
 
-    h_EprimaryAirBox->Sumw2();
-    h_EprimaryAirBox_norm->Sumw2();
-    h_EprimaryAirBox_full->Sumw2();
-    h_EprimaryAirBox_full_norm->Sumw2();
+    h_EgammaAirBox->Sumw2();
+    h_EgammaAirBox_norm->Sumw2();
+    h_EgammaAirBox_full->Sumw2();
+    h_EgammaAirBox_full_norm->Sumw2();
+
+    //h_AbsPxShield0->Sumw2(); 
+    //h_AbsPyShield0->Sumw2();
+    //h_AbsPzShield0->Sumw2();
+    //
+    //h_AbsPxShield1->Sumw2();
+    //h_AbsPyShield1->Sumw2();
+    //h_AbsPzShield1->Sumw2();
+
+    //h_AbsPxShield2->Sumw2();
+    //h_AbsPyShield2->Sumw2();
+    //h_AbsPzShield2->Sumw2();
+    //
+    //h_AbsPxShield3->Sumw2();
+    //h_AbsPyShield3->Sumw2();
+    //h_AbsPzShield3->Sumw2();
+
+    //h_AbsPxAirBox->Sumw2();
+    //h_AbsPyAirBox->Sumw2();
+    //h_AbsPzAirBox->Sumw2();
+
+    h_ThetaShield0->Sumw2();
+    h_PhiShield0->Sumw2(); 
+    
+    h_ThetaShield1->Sumw2();
+    h_PhiShield1->Sumw2(); 
+    
+    h_ThetaShield2->Sumw2();
+    h_PhiShield2->Sumw2(); 
+    
+    h_ThetaShield3->Sumw2();
+    h_PhiShield3->Sumw2(); 
+    
+    h_ThetaAirBox->Sumw2();
+    h_PhiAirBox->Sumw2(); 
+  
+
 
     h_EallAirBox->Sumw2();
     h_EallAirBox_norm->Sumw2();
@@ -173,7 +249,8 @@ void CYGNOAnalysis::Loop()
 {
     Long64_t  events = 0;
     _total_events = 0;
-    
+    _total_flux_events = 0.;   
+ 
     Long64_t nentries;
    
     cout<< "Setting histograms" << endl;  
@@ -217,14 +294,16 @@ void CYGNOAnalysis::Loop()
             b_trackid_flu->GetEntry(jentry);
             b_volNo_flu->GetEntry(jentry);
             //b_prestepVolNo_flu->GetEntry(jentry);
-            //b_pdg_flu->GetEntry(jentry);
+            b_pdg_flu->GetEntry(jentry);
             //b_poststepx_flu->GetEntry(jentry);
             //b_poststepy_flu->GetEntry(jentry);
             //b_poststepz_flu->GetEntry(jentry);
-            //b_px_flu->GetEntry(jentry);
-            //b_py_flu->GetEntry(jentry);
-            //b_pz_flu->GetEntry(jentry);
-            //b_E_ele->GetEntry(jentry);
+            b_px_flu->GetEntry(jentry);
+            b_py_flu->GetEntry(jentry);
+            b_pz_flu->GetEntry(jentry);
+            b_E_ele->GetEntry(jentry);
+            b_parentid_ele->GetEntry(jentry);
+            b_trackid_ele->GetEntry(jentry);
             //b_E_pos->GetEntry(jentry);
             //b_E_pro->GetEntry(jentry);
             //b_E_ion->GetEntry(jentry);
@@ -245,43 +324,80 @@ void CYGNOAnalysis::Loop()
                 this->Smearing();
             }
           
-    
+            double phi;
 	    //All
 	    for (int iflu=0; iflu < E_flu->size(); iflu++){ 
 
-        	    if(volNo_flu->at(iflu)==3 && trackid_flu->at(iflu)==1){
-                        h_EprimaryShield0->Fill(E_flu->at(iflu));
-                        h_EprimaryShield0_norm->Fill(E_flu->at(iflu)); 
-                        h_EprimaryShield0_full->Fill(E_flu->at(iflu));    
-                        h_EprimaryShield0_full_norm->Fill(E_flu->at(iflu));
-			//cout << "E_flu " << E_flu->at(iflu) << "  trackid_flu " << trackid_flu->at(iflu) << endl;
+        	    if(volNo_flu->at(iflu)==3 && pdg_flu->at(iflu)==22){
+                        h_EgammaShield0->Fill(E_flu->at(iflu));
+                        h_EgammaShield0_norm->Fill(E_flu->at(iflu)); 
+                        h_EgammaShield0_full->Fill(E_flu->at(iflu));    
+                        h_EgammaShield0_full_norm->Fill(E_flu->at(iflu));
+		        //h_AbsPxShield0->Fill(px_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu)));
+                        //h_AbsPyShield0->Fill(py_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu)));
+                        //h_AbsPzShield0->Fill(pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu)));
+                        h_ThetaShield0->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+                        phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+                        if (phi<0) phi = phi+2*TMath::Pi();
+                        h_PhiShield0->Fill(phi);
+                        //cout << "phi = " << acos(-px_flu->at(iflu)*sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu))) << endl;
                     }
-        	    if(volNo_flu->at(iflu)==4 && trackid_flu->at(iflu)==1){
-                        h_EprimaryShield1->Fill(E_flu->at(iflu));
-                        h_EprimaryShield1_norm->Fill(E_flu->at(iflu)); 
-                        h_EprimaryShield1_full->Fill(E_flu->at(iflu));    
-                        h_EprimaryShield1_full_norm->Fill(E_flu->at(iflu));
+        	    if(volNo_flu->at(iflu)==4 && pdg_flu->at(iflu)==22){
+                        h_EgammaShield1->Fill(E_flu->at(iflu));
+                        h_EgammaShield1_norm->Fill(E_flu->at(iflu)); 
+                        h_EgammaShield1_full->Fill(E_flu->at(iflu));    
+                        h_EgammaShield1_full_norm->Fill(E_flu->at(iflu));
+		        //h_AbsPxShield1->Fill(px_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu)));
+                        //h_AbsPyShield1->Fill(py_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu)));
+                        //h_AbsPzShield1->Fill(pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu)));
+                        h_ThetaShield1->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+                        phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+                        if (phi<0) phi = phi+2*TMath::Pi();
+                        h_PhiShield1->Fill(phi);
+                        //h_PhiShield1->Fill(atan2(py_flu->at(iflu)/px_flu->at(iflu)));
+                        //Phi defined between -pi and pi
                     }
                         
-        	    if(volNo_flu->at(iflu)==5 && trackid_flu->at(iflu)==1){
-                        h_EprimaryShield2->Fill(E_flu->at(iflu));
-                        h_EprimaryShield2_norm->Fill(E_flu->at(iflu)); 
-                        h_EprimaryShield2_full->Fill(E_flu->at(iflu));    
-                        h_EprimaryShield2_full_norm->Fill(E_flu->at(iflu));
+        	    if(volNo_flu->at(iflu)==5 && pdg_flu->at(iflu)==22){
+                        h_EgammaShield2->Fill(E_flu->at(iflu));
+                        h_EgammaShield2_norm->Fill(E_flu->at(iflu)); 
+                        h_EgammaShield2_full->Fill(E_flu->at(iflu));    
+                        h_EgammaShield2_full_norm->Fill(E_flu->at(iflu));
+		        //h_AbsPxShield2->Fill(px_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu)));
+                        //h_AbsPyShield2->Fill(py_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu)));
+                        //h_AbsPzShield2->Fill(pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu)));
+                        h_ThetaShield2->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+                        phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+                        if (phi<0) phi = phi+2*TMath::Pi();
+                        h_PhiShield2->Fill(phi);
                     }
         
-        	    if(volNo_flu->at(iflu)==6 && trackid_flu->at(iflu)==1){
-                        h_EprimaryShield3->Fill(E_flu->at(iflu));
-                        h_EprimaryShield3_norm->Fill(E_flu->at(iflu)); 
-                        h_EprimaryShield3_full->Fill(E_flu->at(iflu));    
-                        h_EprimaryShield3_full_norm->Fill(E_flu->at(iflu));
+        	    if(volNo_flu->at(iflu)==6 && pdg_flu->at(iflu)==22){
+                        h_EgammaShield3->Fill(E_flu->at(iflu));
+                        h_EgammaShield3_norm->Fill(E_flu->at(iflu)); 
+                        h_EgammaShield3_full->Fill(E_flu->at(iflu));    
+                        h_EgammaShield3_full_norm->Fill(E_flu->at(iflu));
+		        //h_AbsPxShield3->Fill(px_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu)));
+                        //h_AbsPyShield3->Fill(py_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu)));
+                        //h_AbsPzShield3->Fill(pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu)));
+                        h_ThetaShield3->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+                        phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+                        if (phi<0) phi = phi+2*TMath::Pi();
+                        h_PhiShield3->Fill(phi);
                     }
         
-        	    if(volNo_flu->at(iflu)==7 && trackid_flu->at(iflu)==1){
-                        h_EprimaryAirBox->Fill(E_flu->at(iflu));
-                        h_EprimaryAirBox_norm->Fill(E_flu->at(iflu));
-                        h_EprimaryAirBox_full->Fill(E_flu->at(iflu));
-                        h_EprimaryAirBox_full_norm->Fill(E_flu->at(iflu));
+        	    if(volNo_flu->at(iflu)==7 && pdg_flu->at(iflu)==22){
+                        h_EgammaAirBox->Fill(E_flu->at(iflu));
+                        h_EgammaAirBox_norm->Fill(E_flu->at(iflu));
+                        h_EgammaAirBox_full->Fill(E_flu->at(iflu));
+                        h_EgammaAirBox_full_norm->Fill(E_flu->at(iflu));
+		        //h_AbsPxAirBox->Fill(px_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu)));
+                        //h_AbsPyAirBox->Fill(py_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu)));
+                        //h_AbsPzAirBox->Fill(pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu)));
+                        h_ThetaAirBox->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+                        phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+                        if (phi<0) phi = phi+2*TMath::Pi();
+                        h_PhiAirBox->Fill(phi);
                     }
         
         	    if(volNo_flu->at(iflu)==7){
@@ -293,10 +409,26 @@ void CYGNOAnalysis::Loop()
         
               }
 
-             //FIXME : double counting due to non-primary electrons 
+             //FIXME : double counting due to non-gamma electrons 
              for (int iele = 0; iele < E_ele->size(); iele++){
-	             h3_xyz_ele->Fill(poststepx_ele->at(iele),poststepy_ele->at(iele),poststepz_ele->at(iele));	
-             }
+                     Bool_t doublecount = false;
+	             if(iele!=0 && parentid_ele->at(iele)!=trackid_ele->at(iele-1) && parentid_ele->at(iele)!=parentid_ele->at(iele-1)) {
+                         // method to be checked...
+                         //for (int jele=0; jele<iele; jele++){
+                         //    if(parentid_ele->at(iele)==trackid_ele->at(jele)){
+                         //        doublecount = true;
+                         //        break;
+                         //    }
+                         //}
+                         if (!doublecount){
+                             h3_xyz_ele->Fill(poststepx_ele->at(iele),poststepy_ele->at(iele),poststepz_ele->at(iele));	
+                             
+                             if (TMath::Abs(poststepx_ele->at(iele))<510 && TMath::Abs(poststepy_ele->at(iele))<510 && TMath::Abs(poststepz_ele->at(iele))<510 ){
+	                          h3_xyz_ele_fiducial->Fill(poststepx_ele->at(iele),poststepy_ele->at(iele),poststepz_ele->at(iele));	
+		             }
+                         }
+                     }
+              }
               //for (int ipos = 0; ipos < E_pos->size(); ipos++){
 	      //        h3_xyz_pos->Fill(poststepx_pos->at(ipos),poststepy_pos->at(ipos),poststepz_pos->at(ipos));	
               //}
@@ -317,15 +449,15 @@ void CYGNOAnalysis::Loop()
              }	    
 	} //end loop on entries
         
-        if (_externalflux){
-            _total_flux_events += h_EprimaryShield0->GetEntries();
-        }    
-
 	delete mytree;
         delete fopen;
         //delete n_event_gen;
     } //end loop on files
     
+    if (_externalflux){
+        _total_flux_events += h_EgammaShield0->GetEntries();
+    }    
+
 
     this->Normalize();
     this->ComputeBKG();
@@ -359,7 +491,9 @@ void CYGNOAnalysis::Normalize(){
     Double_t norm_flu2, norm_flu2_full;
     Double_t norm_flu3, norm_flu3_full;
     Double_t norm_flu_airbox, norm_flu_airbox_full;
-  
+    Double_t surface_Shield0, surface_Shield1, surface_Shield2, surface_Shield3, surface_AirBox;
+   
+ 
     Double_t AirBox_x = 1.45;
     Double_t AirBox_y = 1.45;
     Double_t AirBox_z = 2.45; //here x and z swiped wrt CYGNODetectorConstruction 
@@ -391,41 +525,55 @@ void CYGNOAnalysis::Normalize(){
     _norm  = norm;
     _normfull  = normfull;
 
-    norm_flu0 = _externalflux_value * 10000. * (2*(AirBox_x+2*_tot_shield_thickness)*(AirBox_y+2*_tot_shield_thickness) + 4*(AirBox_y+2*_tot_shield_thickness)*(AirBox_z+2*_tot_shield_thickness)) / h_EprimaryShield0->GetEntries();  
-    h_EprimaryShield0_norm->Scale(norm_flu0); 
-    h_EprimaryShield0_full_norm->Scale(norm_flu0);
+    surface_Shield0 =(2*(AirBox_x+2*_tot_shield_thickness)*(AirBox_y+2*_tot_shield_thickness) + 4*(AirBox_y+2*_tot_shield_thickness)*(AirBox_z+2*_tot_shield_thickness)); 
+    norm_flu0 = _externalflux_value * 10000. * surface_Shield0 / h_EgammaShield0->GetEntries();  
+    h_EgammaShield0_norm->Scale(norm_flu0); 
+    h_EgammaShield0_full_norm->Scale(norm_flu0);
     //normalized to cts/sec
 
-    //norm_flu1 = (_externalflux_value * 10000. * (2*(AirBox_x+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness))*(AirBox_y+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness)) + 4*(AirBox_y+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness))*(AirBox_z+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness)))) / h_EprimaryShield0->GetEntries();  
-    //h_EprimaryShield1_norm->Scale(norm_flu1); 
-    //h_EprimaryShield1_full_norm->Scale(norm_flu1);
+    //norm_flu1 = (_externalflux_value * 10000. * (2*(AirBox_x+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness))*(AirBox_y+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness)) + 4*(AirBox_y+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness))*(AirBox_z+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness)))) / h_EgammaShield0->GetEntries();  
+    //h_EgammaShield1_norm->Scale(norm_flu1); 
+    //h_EgammaShield1_full_norm->Scale(norm_flu1);
     ////normalized to cts/sec
 
-    //norm_flu2 = (_externalflux_value * 10000. * (2*(AirBox_x+2*(_shield3_thickness+_shield2_thickness))*(AirBox_y+2*(_shield3_thickness+_shield2_thickness)) + 4*(AirBox_y+2*(_shield3_thickness+_shield2_thickness))*(AirBox_z+2*(_shield3_thickness+_shield2_thickness)))) / h_EprimaryShield0->GetEntries();  
-    //h_EprimaryShield2_norm->Scale(norm_flu2); 
-    //h_EprimaryShield2_full_norm->Scale(norm_flu2);
+    //norm_flu2 = (_externalflux_value * 10000. * (2*(AirBox_x+2*(_shield3_thickness+_shield2_thickness))*(AirBox_y+2*(_shield3_thickness+_shield2_thickness)) + 4*(AirBox_y+2*(_shield3_thickness+_shield2_thickness))*(AirBox_z+2*(_shield3_thickness+_shield2_thickness)))) / h_EgammaShield0->GetEntries();  
+    //h_EgammaShield2_norm->Scale(norm_flu2); 
+    //h_EgammaShield2_full_norm->Scale(norm_flu2);
     ////normalized to cts/sec
 
-    //norm_flu3 = (_externalflux_value * 10000. * (2*(2+2*_shield3_thickness)*(2+2*_shield3_thickness) + 4*(2+2*_shield3_thickness)*(3+2*_shield3_thickness))) / h_EprimaryShield0->GetEntries();  
-    //h_EprimaryShield3_norm->Scale(norm_flu3); 
-    //h_EprimaryShield3_full_norm->Scale(norm_flu3);
+    //norm_flu3 = (_externalflux_value * 10000. * (2*(2+2*_shield3_thickness)*(2+2*_shield3_thickness) + 4*(2+2*_shield3_thickness)*(3+2*_shield3_thickness))) / h_EgammaShield0->GetEntries();  
+    //h_EgammaShield3_norm->Scale(norm_flu3); 
+    //h_EgammaShield3_full_norm->Scale(norm_flu3);
     ////normalized to cts/sec
 
-    //norm_flu_airbox = (_externalflux_value * 10000. * (2*2*2 + 4*2*3)) / h_EprimaryShield0->GetEntries();  
-    //h_EprimaryAirBox_norm->Scale(norm_flu_airbox);
-    //h_EprimaryAirBox_full_norm->Scale(norm_flu_airbox);
+    //norm_flu_airbox = (_externalflux_value * 10000. * (2*2*2 + 4*2*3)) / h_EgammaShield0->GetEntries();  
+    //h_EgammaAirBox_norm->Scale(norm_flu_airbox);
+    //h_EgammaAirBox_full_norm->Scale(norm_flu_airbox);
     //h_EallAirBox_norm->Scale(norm);
     //h_EallAirBox_full_norm->Scale(normfull);
     ////normalized to cts/sec
 
-    h_EprimaryShield1_norm->Scale(norm_flu0); 
-    h_EprimaryShield1_full_norm->Scale(norm_flu0);
-    h_EprimaryShield2_norm->Scale(norm_flu0); 
-    h_EprimaryShield2_full_norm->Scale(norm_flu0);
-    h_EprimaryShield3_norm->Scale(norm_flu0); 
-    h_EprimaryShield3_full_norm->Scale(norm_flu0);
-    h_EprimaryAirBox_norm->Scale(norm_flu0); 
-    h_EprimaryAirBox_full_norm->Scale(norm_flu0);
+    surface_Shield1 =(2*(AirBox_x+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness))*(AirBox_y+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness)) + 4*(AirBox_y+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness))*(AirBox_z+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness)));
+    surface_Shield2 =  (2*(AirBox_x+2*(_shield3_thickness+_shield2_thickness))*(AirBox_y+2*(_shield3_thickness+_shield2_thickness)) + 4*(AirBox_y+2*(_shield3_thickness+_shield2_thickness))*(AirBox_z+2*(_shield3_thickness+_shield2_thickness))); 
+
+    surface_Shield3 = (2*(AirBox_x+2*_shield3_thickness)*(AirBox_y+2*_shield3_thickness) + 4*(AirBox_y+2*_shield3_thickness)*(AirBox_z+2*_shield3_thickness)); 
+
+    surface_AirBox  = 2*AirBox_x*AirBox_y + 4*AirBox_y*AirBox_z; 
+    
+    h_EgammaShield1_norm->Scale(norm_flu0); 
+    h_EgammaShield1_full_norm->Scale(norm_flu0);
+    h_EgammaShield2_norm->Scale(norm_flu0); 
+    h_EgammaShield2_full_norm->Scale(norm_flu0);
+    h_EgammaShield3_norm->Scale(norm_flu0); 
+    h_EgammaShield3_full_norm->Scale(norm_flu0);
+    h_EgammaAirBox_norm->Scale(norm_flu0); 
+    h_EgammaAirBox_full_norm->Scale(norm_flu0);
+    
+    cout << "Gamma Flux entering Shield0 " << h_EgammaShield0_full_norm->Integral()/surface_Shield0/1.e4 << " cm^-2 s^-1" << endl;
+    cout << "Gamma Flux entering Shield1 " << h_EgammaShield1_full_norm->Integral()/surface_Shield1/1.e4 << " cm^-2 s^-1" << endl;
+    cout << "Gamma Flux entering Shield2 " << h_EgammaShield2_full_norm->Integral()/surface_Shield2/1.e4 << " cm^-2 s^-1" << endl;
+    cout << "Gamma Flux entering Shield3 " << h_EgammaShield3_full_norm->Integral()/surface_Shield3/1.e4 << " cm^-2 s^-1" << endl;
+    cout << "Gamma Flux entering AirBox " <<  h_EgammaAirBox_full_norm->Integral()/surface_AirBox/1.e4   << " cm^-2 s^-1" << endl;
 
    
 }
