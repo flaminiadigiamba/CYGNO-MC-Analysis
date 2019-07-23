@@ -50,7 +50,8 @@ protected :
     
     Double_t _normfull;
     Double_t _norm;
-    
+   
+
     TRandom *factor;
     TTree *cygno_tree;
 
@@ -61,35 +62,76 @@ protected :
     TH1D *h_edepDet_full;
     TH1D *h_edepDet_full_norm;
     
-    TH1D *h_EprimaryShield0;
-    TH1D *h_EprimaryShield0_norm; 
-    TH1D *h_EprimaryShield0_full;    
-    TH1D *h_EprimaryShield0_full_norm;
+    TH1D *h_EgammaShield0;
+    TH1D *h_EgammaShield0_norm; 
+    TH1D *h_EgammaShield0_full;    
+    TH1D *h_EgammaShield0_full_norm;
 
-    TH1D *h_EprimaryShield1;
-    TH1D *h_EprimaryShield1_norm; 
-    TH1D *h_EprimaryShield1_full;    
-    TH1D *h_EprimaryShield1_full_norm;
+    TH1D *h_EgammaShield1;
+    TH1D *h_EgammaShield1_norm; 
+    TH1D *h_EgammaShield1_full;    
+    TH1D *h_EgammaShield1_full_norm;
     
-    TH1D *h_EprimaryShield2;
-    TH1D *h_EprimaryShield2_norm; 
-    TH1D *h_EprimaryShield2_full;    
-    TH1D *h_EprimaryShield2_full_norm;
+    TH1D *h_EgammaShield2;
+    TH1D *h_EgammaShield2_norm; 
+    TH1D *h_EgammaShield2_full;    
+    TH1D *h_EgammaShield2_full_norm;
 
-    TH1D *h_EprimaryShield3;
-    TH1D *h_EprimaryShield3_norm; 
-    TH1D *h_EprimaryShield3_full;    
-    TH1D *h_EprimaryShield3_full_norm;
+    TH1D *h_EgammaShield3;
+    TH1D *h_EgammaShield3_norm; 
+    TH1D *h_EgammaShield3_full;    
+    TH1D *h_EgammaShield3_full_norm;
 
-    TH1D *h_EprimaryAirBox;
-    TH1D *h_EprimaryAirBox_norm;
-    TH1D *h_EprimaryAirBox_full;
-    TH1D *h_EprimaryAirBox_full_norm;
+    TH1D *h_EgammaAirBox;
+    TH1D *h_EgammaAirBox_norm;
+    TH1D *h_EgammaAirBox_full;
+    TH1D *h_EgammaAirBox_full_norm;
 
     TH1D *h_EallAirBox;
     TH1D *h_EallAirBox_norm;
     TH1D *h_EallAirBox_full;
     TH1D *h_EallAirBox_full_norm;
+    
+    TH1D *h_AbsPxShield0;
+    TH1D *h_AbsPyShield0; 
+    TH1D *h_AbsPzShield0;    
+    
+    TH1D *h_AbsPxShield1;
+    TH1D *h_AbsPyShield1; 
+    TH1D *h_AbsPzShield1;    
+    
+    TH1D *h_AbsPxShield2;
+    TH1D *h_AbsPyShield2; 
+    TH1D *h_AbsPzShield2;    
+    
+    TH1D *h_AbsPxShield3;
+    TH1D *h_AbsPyShield3; 
+    TH1D *h_AbsPzShield3;    
+    
+    TH1D *h_AbsPxAirBox;
+    TH1D *h_AbsPyAirBox; 
+    TH1D *h_AbsPzAirBox;    
+
+    TH1D *h_ThetaShield0;
+    TH1D *h_PhiShield0; 
+    
+    TH1D *h_ThetaShield1;
+    TH1D *h_PhiShield1; 
+    
+    TH1D *h_ThetaShield2;
+    TH1D *h_PhiShield2; 
+    
+    TH1D *h_ThetaShield3;
+    TH1D *h_PhiShield3; 
+    
+    TH1D *h_ThetaAirBox;
+    TH1D *h_PhiAirBox; 
+    
+
+    TH1D *h_AirBox;
+    TH1D *h_AirBox_norm;
+    TH1D *h_AirBox_full;
+    TH1D *h_AirBox_full_norm;
 
     TH1D *h_E_ele;
     TH1D *h_E_ele_norm;
