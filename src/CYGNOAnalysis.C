@@ -262,7 +262,7 @@ void CYGNOAnalysis::Loop()
     
     for(my_file_iter = _file_to_be_open.begin(); my_file_iter != _file_to_be_open.end(); ++my_file_iter){
         //loop on files
-        TFile * fopen = new TFile(my_file_iter->c_str());
+        TFile * fopen = TFile::Open(my_file_iter->c_str());
         TTree * mytree = new TTree();
         TH1D *n_event_gen;
         
