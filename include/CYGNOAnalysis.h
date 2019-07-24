@@ -40,6 +40,7 @@ protected :
     Double_t _shield3_thickness;
     Long64_t _total_events;
     Long64_t _total_flux_events; 
+    Long64_t _total_flux_events_flu0; 
 
     Double_t _bkg_cpd_kg;
     Double_t _bkg_cpd_kg_err;
