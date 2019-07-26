@@ -96,7 +96,7 @@ if (nlists==1 and args.maxfilesperjob>0):
           splittedlist.close()
           splittedlists.append(splittedlist)
           jj+=1
-      jf+=1
+      jf+=2
   nfiles = jf+1
 
 
@@ -117,7 +117,12 @@ half_life HALFLIFE
 smearing SMEARING
 filelist lists/LISTDIR/list_ISOTOPE_RadioactiveDecayFromVOLUME.txt
 root_out OUTPUTFILE_DECAY"""
-  #print template_conf
+  submit_template_decay = """#!/bin/bash
+#PBS -j oe  
+#PBS -o logs/"""+args.tag+"""/pbslog_ISOTOPE_RadioactiveDecayFromVOLUME
+cd WORKDIR
+pwd
+time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_ISOTOPE_RadioactiveDecayFromVOLUME  > logs/"""+args.tag+"""/Analysis_log_ISOTOPE_RadioactiveDecayFromVOLUME"""+"""\n"""
 
   if (args.maxfilesperjob)<0:
     template_conf_externals =  """externalflux 1
@@ -131,13 +136,6 @@ smearing SMEARING
 filelist lists/LISTDIR/list_external_SHIELDGEO.txt
 root_out OUTPUTFILE_EXT\n"""
   
-    submit_template_decay = """#!/bin/bash
-#PBS -j oe  
-#PBS -o logs/"""+args.tag+"""/pbslog_ISOTOPE_RadioactiveDecayFromVOLUME
-cd WORKDIR
-pwd
-time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_ISOTOPE_RadioactiveDecayFromVOLUME  > logs/"""+args.tag+"""/Analysis_log_ISOTOPE_RadioactiveDecayFromVOLUME"""+"""\n"""
-
     submit_template_externals = """#!/bin/bash
 #PBS -j oe 
 #PBS -o logs/"""+args.tag+"""/pbsloglog_external_shieldgeo"""+args.tag+"""
@@ -175,6 +173,7 @@ time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_external_shieldgeo_"""+ar
   thick1 = -999
   thick2 = -999
   thick3 = -999
+  smearing = 0
 
   if not args.external and not line.startswith("#"):
     vol_name = line.split()[0]
@@ -190,32 +189,33 @@ time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_external_shieldgeo_"""+ar
     thick3 = line.split()[4]
     smearing = line.split()[5]
     
+  if not line.startswith("#"):
     dict_replace_external = {
-	"THICK0":thick0,
-	"THICK1":thick1,
-	"THICK2":thick2,
-	"THICK3":thick3,
+        "THICK0":thick0,
+        "THICK1":thick1,
+        "THICK2":thick2,
+        "THICK3":thick3,
         "WORKDIR":args.workdir,
         "LISTDIR":args.listdir,
-	"SMEARING":smearing,
+        "SMEARING":smearing,
         "SHIELDGEO":args.tag,
         "FLUX":flux,
-	"OUTPUTFILE_EXT":"%s/output/%s/out_external_%s.root"%(args.workdir,args.tag,args.tag),
-	"OUTPUTFILE_EXT_PART":"%s/output/%s/out_external_%s_part_IJOB.root"%(args.workdir,args.tag,args.tag)
-	}
+        "OUTPUTFILE_EXT":"%s/output/%s/out_external_%s.root"%(args.workdir,args.tag,args.tag),
+        "OUTPUTFILE_EXT_PART":"%s/output/%s/out_external_%s_part_IJOB.root"%(args.workdir,args.tag,args.tag)
+        }
     
     
     dict_replace = {
-	"WORKDIR":args.workdir,
+        "WORKDIR":args.workdir,
         "LISTDIR":args.listdir,
-	"VOLUME":vol_name,
-	"MASS":str(mass[vol_name]),
-      	"ACTIVITY":activity,
+        "VOLUME":vol_name,
+        "MASS":str(mass[vol_name]),
+        "ACTIVITY":activity,
         "HALFLIFE":halflife,
-       	"ISOTOPE":isotope,
-	"SMEARING":smearing,
-	"OUTPUTFILE_DECAY":"%s/output/%s/%s_RadioactiveDecayFrom%s.root"%(args.workdir,args.tag,isotope,vol_name),
-	}
+        "ISOTOPE":isotope,
+        "SMEARING":smearing,
+        "OUTPUTFILE_DECAY":"%s/output/%s/%s_RadioactiveDecayFrom%s.root"%(args.workdir,args.tag,isotope,vol_name)
+        }
 
     ### Create SABREAnalysis config
     if (args.external and args.maxfilesperjob<0):
@@ -231,14 +231,14 @@ time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_external_shieldgeo_"""+ar
       outsubmitjob = open("submit/%s/submit_external_shieldgeo_%s.sh"%(args.tag,args.tag), "w") 
       outsubmitjob.write(submitjob_filled)
       os.system("chmod +x submit/%s/submit_external_shieldgeo_%s.sh"%(args.tag,args.tag))
-      #os.system("bsub -oo logs/%s/_external_shieldgeo_%s submit/%s/submit_external_shieldgeo_%s.sh"%(args.tag,args.tag,args.tag,args.tag)
-      cmd = "qsub submit/%s/submit_external_shieldgeo_%s.sh"%(args.tag,args.tag) 
+      cmd = "bsub -oo logs/%s/_external_shieldgeo_%s submit/%s/submit_external_shieldgeo_%s.sh"%(args.tag,args.tag,args.tag,args.tag)
+      #cmd = "qsub submit/%s/submit_external_shieldgeo_%s.sh"%(args.tag,args.tag) 
       print cmd
       #os.system(cmd)
       subprocess.Popen([cmd], shell=True)
     
     elif (args.external):
-      print("debug")
+      print("externals splitted")
       for ijob in range(0,njobs):
         #print templateconflist[ijob]
         for k,v in dict_replace_external.items():          
@@ -255,17 +255,19 @@ time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_external_shieldgeo_"""+ar
         outsubmitjob = open("submit/%s/submit_external_shieldgeo_%s_part_%s.sh"%(args.tag,args.tag,ijob), "w") 
         outsubmitjob.write(templatesubmitlist[ijob])
         os.system("chmod +x submit/%s/submit_external_shieldgeo_%s_part_%s.sh"%(args.tag,args.tag,ijob))
-        #os.system("bsub -oo logs/%s/log_external_shieldgeo_%s_part_%s submit/%s/submit_external_shieldgeo_%s_part_%s.sh"%(args.tag,args.tag,ijob,args.tag,args.tag,ijob)
-        cmd = "qsub submit/%s/submit_external_shieldgeo_%s_part_%s.sh"%(args.tag,args.tag,ijob)
+        cmd = "bsub -oo logs/%s/log_external_shieldgeo_%s_part_%s submit/%s/submit_external_shieldgeo_%s_part_%s.sh"%(args.tag,args.tag,ijob,args.tag,args.tag,ijob)
+        #cmd = "qsub submit/%s/submit_external_shieldgeo_%s_part_%s.sh"%(args.tag,args.tag,ijob)
         print cmd
         #os.system(cmd)
         subprocess.Popen([cmd], shell=True)
     else:
       template_conf = template_conf_decay
       for k,v in dict_replace.items():
+        #print k+" "+str(v)
         conf_filled =  re.sub(k,v,template_conf)
+        template_conf = conf_filled
       outconfig = open("config/%s/cygnoconf_%s_RadioactiveDecayFrom%s"%(args.tag,isotope,vol_name), "w") 
-      outconfig.write(conf_filled)
+      outconfig.write(template_conf)
       submit_template = submit_template_decay
       for k,v in dict_replace.items():
         submitjob_filled =  re.sub(k,v,submit_template)
@@ -273,9 +275,9 @@ time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_external_shieldgeo_"""+ar
       outsubmitjob = open("submit/%s/submit_%s_RadioactiveDecayFrom%s.sh"%(args.tag,isotope,vol_name), "w") 
       outsubmitjob.write(submitjob_filled)
       os.system("chmod +x submit/%s/submit_%s_RadioactiveDecayFrom%s.sh"%(args.tag,isotope,vol_name))
-      #os.system("bsub -oo logs/%s/log__%s_RadioactiveDecayFrom%s submit/%s/submit_%s_RadioactiveDecayFrom%s.sh"%(args.tag,isotope,vol_name,args.tag,isotope,vol_name))
-      cmd ="qsub  submit/%s/submit_%s_RadioactiveDecayFrom%s.sh"%(args.tag,isotope,vol_name) 
+      cmd="bsub -oo logs/%s/log_%s_RadioactiveDecayFrom%s submit/%s/submit_%s_RadioactiveDecayFrom%s.sh"%(args.tag,isotope,vol_name,args.tag,isotope,vol_name)
+      #cmd ="qsub  submit/%s/submit_%s_RadioactiveDecayFrom%s.sh"%(args.tag,isotope,vol_name) 
       print cmd
       #os.system(cmd)
       subprocess.Popen([cmd], shell=True)
-
+  
