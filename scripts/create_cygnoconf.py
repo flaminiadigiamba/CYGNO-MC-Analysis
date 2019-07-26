@@ -222,8 +222,9 @@ time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_external_shieldgeo_"""+ar
       template_conf = template_conf_externals
       for k,v in dict_replace_external.items():
         conf_filled =  re.sub(k,v,template_conf)
+        template_conf = conf_filled
       outconfig = open("config/%s/cygnoconf_external_shieldgeo_%s"%(args.tag,args.tag), "w") 
-      outconfig.write(conf_filled)
+      outconfig.write(template_conf)
       submit_template = submit_template_externals
       for k,v in dict_replace_external.items():
         submitjob_filled =  re.sub(k,v,submit_template)
@@ -231,8 +232,8 @@ time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_external_shieldgeo_"""+ar
       outsubmitjob = open("submit/%s/submit_external_shieldgeo_%s.sh"%(args.tag,args.tag), "w") 
       outsubmitjob.write(submitjob_filled)
       os.system("chmod +x submit/%s/submit_external_shieldgeo_%s.sh"%(args.tag,args.tag))
-      cmd = "bsub -oo logs/%s/_external_shieldgeo_%s submit/%s/submit_external_shieldgeo_%s.sh"%(args.tag,args.tag,args.tag,args.tag)
-      #cmd = "qsub submit/%s/submit_external_shieldgeo_%s.sh"%(args.tag,args.tag) 
+      #cmd = "bsub -oo logs/%s/_external_shieldgeo_%s submit/%s/submit_external_shieldgeo_%s.sh"%(args.tag,args.tag,args.tag,args.tag)
+      cmd = "qsub submit/%s/submit_external_shieldgeo_%s.sh"%(args.tag,args.tag) 
       print cmd
       #os.system(cmd)
       subprocess.Popen([cmd], shell=True)
@@ -255,8 +256,8 @@ time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_external_shieldgeo_"""+ar
         outsubmitjob = open("submit/%s/submit_external_shieldgeo_%s_part_%s.sh"%(args.tag,args.tag,ijob), "w") 
         outsubmitjob.write(templatesubmitlist[ijob])
         os.system("chmod +x submit/%s/submit_external_shieldgeo_%s_part_%s.sh"%(args.tag,args.tag,ijob))
-        cmd = "bsub -oo logs/%s/log_external_shieldgeo_%s_part_%s submit/%s/submit_external_shieldgeo_%s_part_%s.sh"%(args.tag,args.tag,ijob,args.tag,args.tag,ijob)
-        #cmd = "qsub submit/%s/submit_external_shieldgeo_%s_part_%s.sh"%(args.tag,args.tag,ijob)
+        #cmd = "bsub -oo logs/%s/log_external_shieldgeo_%s_part_%s submit/%s/submit_external_shieldgeo_%s_part_%s.sh"%(args.tag,args.tag,ijob,args.tag,args.tag,ijob)
+        cmd = "qsub submit/%s/submit_external_shieldgeo_%s_part_%s.sh"%(args.tag,args.tag,ijob)
         print cmd
         #os.system(cmd)
         subprocess.Popen([cmd], shell=True)
@@ -275,8 +276,8 @@ time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_external_shieldgeo_"""+ar
       outsubmitjob = open("submit/%s/submit_%s_RadioactiveDecayFrom%s.sh"%(args.tag,isotope,vol_name), "w") 
       outsubmitjob.write(submitjob_filled)
       os.system("chmod +x submit/%s/submit_%s_RadioactiveDecayFrom%s.sh"%(args.tag,isotope,vol_name))
-      cmd="bsub -oo logs/%s/log_%s_RadioactiveDecayFrom%s submit/%s/submit_%s_RadioactiveDecayFrom%s.sh"%(args.tag,isotope,vol_name,args.tag,isotope,vol_name)
-      #cmd ="qsub  submit/%s/submit_%s_RadioactiveDecayFrom%s.sh"%(args.tag,isotope,vol_name) 
+      #cmd="bsub -oo logs/%s/log_%s_RadioactiveDecayFrom%s submit/%s/submit_%s_RadioactiveDecayFrom%s.sh"%(args.tag,isotope,vol_name,args.tag,isotope,vol_name)
+      cmd ="qsub  submit/%s/submit_%s_RadioactiveDecayFrom%s.sh"%(args.tag,isotope,vol_name) 
       print cmd
       #os.system(cmd)
       subprocess.Popen([cmd], shell=True)
