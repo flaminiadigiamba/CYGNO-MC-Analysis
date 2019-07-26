@@ -219,12 +219,12 @@ time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_external_shieldgeo_"""+ar
 
     ### Create SABREAnalysis config
     if (args.external and args.maxfilesperjob<0):
-      template_conf = template_conf_external
+      template_conf = template_conf_externals
       for k,v in dict_replace_external.items():
         conf_filled =  re.sub(k,v,template_conf)
       outconfig = open("config/%s/cygnoconf_external_shieldgeo_%s"%(args.tag,args.tag), "w") 
       outconfig.write(conf_filled)
-      submit_template = submit_template_external
+      submit_template = submit_template_externals
       for k,v in dict_replace_external.items():
         submitjob_filled =  re.sub(k,v,submit_template)
         submit_template = submitjob_filled
