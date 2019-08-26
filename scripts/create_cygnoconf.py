@@ -77,7 +77,8 @@ splittedlists = []
 #  nlists +=1
 nlists = len(glob.glob1("lists/"+args.listdir,"*.txt"))
 
-print nlists
+#print nlists
+#print args.maxfilesperjob
 
 if (nlists==1 and args.maxfilesperjob>0):  
   jf=0  ##counter for num of files
@@ -99,6 +100,7 @@ if (nlists==1 and args.maxfilesperjob>0):
       jf+=2
   nfiles = jf+1
 
+#print nfiles
 
 njobs = len(splittedlists)
 ijob=0
@@ -119,7 +121,6 @@ filelist lists/LISTDIR/list_ISOTOPE_RadioactiveDecayFromVOLUME.txt
 root_out OUTPUTFILE_DECAY"""
   submit_template_decay = """#!/bin/bash
 #PBS -j oe  
-#PBS -o logs/"""+args.tag+"""/pbslog_ISOTOPE_RadioactiveDecayFromVOLUME
 cd WORKDIR
 pwd
 time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_ISOTOPE_RadioactiveDecayFromVOLUME  > logs/"""+args.tag+"""/Analysis_log_ISOTOPE_RadioactiveDecayFromVOLUME"""+"""\n"""
@@ -138,7 +139,6 @@ root_out OUTPUTFILE_EXT\n"""
   
     submit_template_externals = """#!/bin/bash
 #PBS -j oe 
-#PBS -o logs/"""+args.tag+"""/pbsloglog_external_shieldgeo"""+args.tag+"""
 cd WORKDIR
 pwd
 time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_external_shieldgeo_"""+args.tag+""" > logs/"""+args.tag+"""/Analysis_log_external_shieldgeo"""+args.tag+"""\n"""
@@ -158,7 +158,6 @@ root_out OUTPUTFILE_EXT_PART\n"""
       templateconflist.append(template_conf_externals)
       submit_template_externals = """#!/bin/bash
 #PBS -j oe 
-#PBS -o logs/"""+args.tag+"""/pbslog_external_shieldgeo"""+args.tag+"""_part_"""+str(ijob)+"""
 cd WORKDIR
 pwd
 time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_external_shieldgeo_"""+args.tag+"""_part_"""+str(ijob)+""" > logs/"""+args.tag+"""/Analysis_log_external_shieldgeo"""+args.tag+"""_part_"""+str(ijob)+"""\n"""
@@ -233,7 +232,7 @@ time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_external_shieldgeo_"""+ar
       outsubmitjob.write(submitjob_filled)
       os.system("chmod +x submit/%s/submit_external_shieldgeo_%s.sh"%(args.tag,args.tag))
       #cmd = "bsub -oo logs/%s/_external_shieldgeo_%s submit/%s/submit_external_shieldgeo_%s.sh"%(args.tag,args.tag,args.tag,args.tag)
-      cmd = "qsub submit/%s/submit_external_shieldgeo_%s.sh"%(args.tag,args.tag) 
+      cmd = "qsub -o logs/%s/pbslog_external_shieldgeo_%s submit/%s/submit_external_shieldgeo_%s.sh"%(args.tag,args.tag,args.tag,args.tag) 
       print cmd
       #os.system(cmd)
       subprocess.Popen([cmd], shell=True)
@@ -257,7 +256,7 @@ time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_external_shieldgeo_"""+ar
         outsubmitjob.write(templatesubmitlist[ijob])
         os.system("chmod +x submit/%s/submit_external_shieldgeo_%s_part_%s.sh"%(args.tag,args.tag,ijob))
         #cmd = "bsub -oo logs/%s/log_external_shieldgeo_%s_part_%s submit/%s/submit_external_shieldgeo_%s_part_%s.sh"%(args.tag,args.tag,ijob,args.tag,args.tag,ijob)
-        cmd = "qsub submit/%s/submit_external_shieldgeo_%s_part_%s.sh"%(args.tag,args.tag,ijob)
+        cmd = "qsub -o logs/%s/pbslog_external_shieldgeo_%s_part_%s submit/%s/submit_external_shieldgeo_%s_part_%s.sh"%(args.tag,args.tag,ijob,args.tag,args.tag,ijob)
         print cmd
         #os.system(cmd)
         subprocess.Popen([cmd], shell=True)
@@ -277,7 +276,7 @@ time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_external_shieldgeo_"""+ar
       outsubmitjob.write(submitjob_filled)
       os.system("chmod +x submit/%s/submit_%s_RadioactiveDecayFrom%s.sh"%(args.tag,isotope,vol_name))
       #cmd="bsub -oo logs/%s/log_%s_RadioactiveDecayFrom%s submit/%s/submit_%s_RadioactiveDecayFrom%s.sh"%(args.tag,isotope,vol_name,args.tag,isotope,vol_name)
-      cmd ="qsub  submit/%s/submit_%s_RadioactiveDecayFrom%s.sh"%(args.tag,isotope,vol_name) 
+      cmd ="qsub -o logs/%s/pbslog_%s_RadioactiveDecayFrom%s submit/%s/submit_%s_RadioactiveDecayFrom%s.sh"%(args.tag,isotope,vol_name, args.tag,isotope,vol_name) 
       print cmd
       #os.system(cmd)
       subprocess.Popen([cmd], shell=True)
