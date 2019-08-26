@@ -41,6 +41,7 @@ protected :
     Long64_t _total_events;
     Long64_t _total_flux_events; 
     Long64_t _total_flux_events_flu0; 
+    Long64_t _total_flux_events_flu0_test; 
 
     Double_t _bkg_cpd_kg;
     Double_t _bkg_cpd_kg_err;
@@ -57,6 +58,7 @@ protected :
     TTree *cygno_tree;
 
     //histograms
+    TH1D *h_NTot;
     
     TH1D *h_edepDet;
     TH1D *h_edepDet_norm;
