@@ -1,0 +1,8 @@
+externalflux 0
+CYGNO_gas_mass 1.6208755
+mass 38.295
+activity 0.89306698
+half_life -999 
+smearing 0
+filelist lists/list_40K_RadioactiveDecayFromCameraBody_test.txt
+root_out /storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/40K_RadioactiveDecayFromCameraBody_test.root
