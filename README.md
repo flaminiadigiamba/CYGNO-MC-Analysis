@@ -48,9 +48,9 @@ The code expects a config file with different structure, depending if you want t
 The script to run the analysis in the PBS batch system is `scripts/create_cygnoconf.py`
 Options:
 
-* `-i` <config_file>
-* `--tag` <tag>
-* `--list` <inputlist>
-* `--split` <maximum files per job> (ony for external backgrounds)
+* `-i` [config_file]
+* `--tag` [tag]
+* `--list` [inputlist]
+* `--split` [maximum_files_per_job] (ony for external backgrounds)
 * `--external` (use this option if analyzing external backgrounds)
 * `--retry` (use this option if you want to relaunch only failed jobs)
