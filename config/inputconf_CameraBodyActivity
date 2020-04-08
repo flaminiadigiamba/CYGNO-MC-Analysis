@@ -1,0 +1,12 @@
+### Volume_name    Isotope                        Activity[Bq/kg]    Smearing[0 or 1]    T1/2 
+CameraBody             40K                            0.89306698              0              -999
+CameraBody             60Co                           0.00564042              0              -999
+CameraBody             137Cs                          0.04230317              0              -999
+###U238 chain
+CameraBody             214Pb                          0.84606345           0               -999
+CameraBody             214Bi                          0.84606345           0               -999
+###Th232 chain                                       
+CameraBody             228Ac                          0.98707403           0               -999
+CameraBody             212Pb                          0.98707403           0               -999
+#CameraBody            212Bi                          0.98707403           0               -999
+CameraBody            208Tl                           0.35534665           0               -999

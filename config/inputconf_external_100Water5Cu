@@ -1,0 +1,3 @@
+#------------------------------------------------------------------
+# Flux [cm^2 s^-1]     Thickness shield0 [m]      Thickness shield1 [m]     Thickness shield2 [m]     Thickness shield3 [m]   smearing
+0.56                    0.01                        0.01                        1.0                         0.05           	0
