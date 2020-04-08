@@ -41,6 +41,8 @@ parser.add_argument("--split",type=int, dest="maxfilesperjob", default=-999,
 parser.add_argument("--external",action="store_true", dest="external", default=False,
     help="maximum files per job"
 )
+parser.add_argument('-r', '--retry', default=False, action='store_true',
+                      help='It looks in the output folder and watch for missing files and resubmit them.')
 
 args = parser.parse_args()
 print args 
@@ -56,6 +58,7 @@ mass = {
 "Shield1":16113.5,
 "Shield2":57782.8,
 "Shield3":8738.24,
+"AcrylicBox":201.072,
 "cad_camera_carter_physical":14.0275,
 "cad_cameras_all_physical":32.7229,
 "cad_fc_support_physical":29.77,
@@ -66,7 +69,9 @@ mass = {
 "cad_cathode_frame_physical":56.5125,
 "cad_cathode_physical":0.98408,
 "TPC_gas":0.98408,
-"CYGNO_gas":2*0.810438
+"CYGNO_gas":2*0.810438,
+"CameraBody":18*2.1275,
+
 
 }
 
@@ -90,14 +95,14 @@ if (nlists==1 and args.maxfilesperjob>0):
   for line in file_inputList:
       modulo = int(jf+1) % int(args.maxfilesperjob)
       #print "file:%i  filesperjob:%i  job:%i op.modulo:%i  list %s " % (jf, args.maxfilesperjob,jj,modulo, line)
-      splittedlistfilename = "lists/"+args.listdir+"/split/list_external_shieldgeo_"+args.tag+"_part_"+str(jj)+".list"
+      splittedlistfilename = "lists/"+args.listdir+"/split/list_external_"+args.tag+"_part_"+str(jj)+".list"
       splittedlist = open(splittedlistfilename,"a+")
       splittedlist.write(line)
       if ( modulo == 0 or jf+1==nfiles ):
           splittedlist.close()
           splittedlists.append(splittedlist)
           jj+=1
-      jf+=2
+      jf+=1
   nfiles = jf+1
 
 #print nfiles
@@ -113,7 +118,6 @@ for line in inputconf:
   template_conf_decay =  """externalflux 0
 CYGNO_gas_mass 1.6208755
 mass MASS
-smearing SMEARING
 activity ACTIVITY
 half_life HALFLIFE 
 smearing SMEARING
@@ -121,6 +125,7 @@ filelist lists/LISTDIR/list_ISOTOPE_RadioactiveDecayFromVOLUME.txt
 root_out OUTPUTFILE_DECAY"""
   submit_template_decay = """#!/bin/bash
 #PBS -j oe  
+source /storage/local/exp_soft/cygnorm3/root-v6-12-06-install/bin/thisroot.sh 
 cd WORKDIR
 pwd
 time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_ISOTOPE_RadioactiveDecayFromVOLUME  > logs/"""+args.tag+"""/Analysis_log_ISOTOPE_RadioactiveDecayFromVOLUME"""+"""\n"""
@@ -139,9 +144,10 @@ root_out OUTPUTFILE_EXT\n"""
   
     submit_template_externals = """#!/bin/bash
 #PBS -j oe 
+source /storage/local/exp_soft/cygnorm3/root-v6-12-06-install/bin/thisroot.sh
 cd WORKDIR
 pwd
-time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_external_shieldgeo_"""+args.tag+""" > logs/"""+args.tag+"""/Analysis_log_external_shieldgeo"""+args.tag+"""\n"""
+time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_external_"""+args.tag+""" > logs/"""+args.tag+"""/Analysis_log_external_"""+args.tag+"""\n"""
 
   else:
     for ijob in range(0,njobs):
@@ -157,10 +163,11 @@ filelist """+splittedlists[ijob].name+"""
 root_out OUTPUTFILE_EXT_PART\n"""
       templateconflist.append(template_conf_externals)
       submit_template_externals = """#!/bin/bash
-#PBS -j oe 
+#PBS -j oe
+source /storage/local/exp_soft/cygnorm3/root-v6-12-06-install/bin/thisroot.sh 
 cd WORKDIR
 pwd
-time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_external_shieldgeo_"""+args.tag+"""_part_"""+str(ijob)+""" > logs/"""+args.tag+"""/Analysis_log_external_shieldgeo"""+args.tag+"""_part_"""+str(ijob)+"""\n"""
+time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_external_"""+args.tag+"""_part_"""+str(ijob)+""" > logs/"""+args.tag+"""/Analysis_log_external_"""+args.tag+"""_part_"""+str(ijob)+"""\n"""
       templatesubmitlist.append(submit_template_externals)
  
   vol_name="foo"
@@ -181,6 +188,7 @@ time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_external_shieldgeo_"""+ar
     smearing = line.split()[3]
     halflife = line.split()[4]
   elif args.external and not line.startswith("#"): 
+    print line
     flux = line.split()[0]
     thick0 = line.split()[1]
     thick1 = line.split()[2]
@@ -222,17 +230,17 @@ time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_external_shieldgeo_"""+ar
       for k,v in dict_replace_external.items():
         conf_filled =  re.sub(k,v,template_conf)
         template_conf = conf_filled
-      outconfig = open("config/%s/cygnoconf_external_shieldgeo_%s"%(args.tag,args.tag), "w") 
+      outconfig = open("config/%s/cygnoconf_external_%s"%(args.tag,args.tag), "w") 
       outconfig.write(template_conf)
       submit_template = submit_template_externals
       for k,v in dict_replace_external.items():
         submitjob_filled =  re.sub(k,v,submit_template)
         submit_template = submitjob_filled
-      outsubmitjob = open("submit/%s/submit_external_shieldgeo_%s.sh"%(args.tag,args.tag), "w") 
+      outsubmitjob = open("submit/%s/submit_external_%s.sh"%(args.tag,args.tag), "w") 
       outsubmitjob.write(submitjob_filled)
-      os.system("chmod +x submit/%s/submit_external_shieldgeo_%s.sh"%(args.tag,args.tag))
-      #cmd = "bsub -oo logs/%s/_external_shieldgeo_%s submit/%s/submit_external_shieldgeo_%s.sh"%(args.tag,args.tag,args.tag,args.tag)
-      cmd = "qsub -o logs/%s/pbslog_external_shieldgeo_%s submit/%s/submit_external_shieldgeo_%s.sh"%(args.tag,args.tag,args.tag,args.tag) 
+      os.system("chmod +x submit/%s/submit_external_%s.sh"%(args.tag,args.tag))
+      #cmd = "bsub -oo logs/%s/_external_%s submit/%s/submit_external_%s.sh"%(args.tag,args.tag,args.tag,args.tag)
+      cmd = "qsub -o logs/%s/pbslog_external_%s submit/%s/submit_external_%s.sh"%(args.tag,args.tag,args.tag,args.tag) 
       print cmd
       #os.system(cmd)
       subprocess.Popen([cmd], shell=True)
@@ -245,21 +253,31 @@ time ./CYGNOAnalysis config/"""+args.tag+"""/cygnoconf_external_shieldgeo_"""+ar
           conf_filled =  re.sub(k,v,templateconflist[ijob])
           conf_filled =  re.sub("IJOB",str(ijob),conf_filled)
           templateconflist[ijob] = conf_filled
-        outconfig = open("config/%s/cygnoconf_external_shieldgeo_%s_part_%s"%(args.tag,args.tag,ijob), "w") 
+        outconfig = open("config/%s/cygnoconf_external_%s_part_%s"%(args.tag,args.tag,ijob), "w") 
         outconfig.write(templateconflist[ijob])
         #print templateconflist[ijob]         
       for ijob in range(0,njobs):
         for k,v in dict_replace_external.items():
           submitjob_filled =  re.sub(k,v,templatesubmitlist[ijob])
           templatesubmitlist[ijob] = submitjob_filled
-        outsubmitjob = open("submit/%s/submit_external_shieldgeo_%s_part_%s.sh"%(args.tag,args.tag,ijob), "w") 
+        outsubmitjob = open("submit/%s/submit_external_%s_part_%s.sh"%(args.tag,args.tag,ijob), "w") 
         outsubmitjob.write(templatesubmitlist[ijob])
-        os.system("chmod +x submit/%s/submit_external_shieldgeo_%s_part_%s.sh"%(args.tag,args.tag,ijob))
-        #cmd = "bsub -oo logs/%s/log_external_shieldgeo_%s_part_%s submit/%s/submit_external_shieldgeo_%s_part_%s.sh"%(args.tag,args.tag,ijob,args.tag,args.tag,ijob)
-        cmd = "qsub -o logs/%s/pbslog_external_shieldgeo_%s_part_%s submit/%s/submit_external_shieldgeo_%s_part_%s.sh"%(args.tag,args.tag,ijob,args.tag,args.tag,ijob)
+        os.system("chmod +x submit/%s/submit_external_%s_part_%s.sh"%(args.tag,args.tag,ijob))
+        #cmd = "bsub -oo logs/%s/log_external_%s_part_%s submit/%s/submit_external_%s_part_%s.sh"%(args.tag,args.tag,ijob,args.tag,args.tag,ijob)
+        cmd = "qsub -o logs/%s/pbslog_external_%s_part_%s submit/%s/submit_external_%s_part_%s.sh"%(args.tag,args.tag,ijob,args.tag,args.tag,ijob)
         print cmd
         #os.system(cmd)
-        subprocess.Popen([cmd], shell=True)
+        if args.retry:
+          #Checking if the output and log exists
+          if os.path.isfile('output/%s/out_external_%s_part_%s.root'%(args.tag,args.tag,ijob)):
+            print('The output file output/%s/out_external_%s_part_%s.root exists and the job will not be resubmitted.'%(args.tag,args.tag,ijob))
+	    continue
+          else:
+            print('Output file output/%s/out_external_%s_part_%s.root not found, resubmitted.'%(args.tag,args.tag,ijob))
+            subprocess.Popen([cmd], shell=True)
+        else:
+          subprocess.Popen([cmd], shell=True)
+ 
     else:
       template_conf = template_conf_decay
       for k,v in dict_replace.items():

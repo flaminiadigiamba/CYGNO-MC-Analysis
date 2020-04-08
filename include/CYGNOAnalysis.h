@@ -38,10 +38,18 @@ protected :
     Double_t _shield1_thickness;
     Double_t _shield2_thickness;
     Double_t _shield3_thickness;
-    Long64_t _total_events;
-    Long64_t _total_flux_events; 
-    Long64_t _total_flux_events_flu0; 
-    Long64_t _total_flux_events_flu0_test; 
+    Long64_t _total_events=0;
+    Long64_t _total_flux_events=0; 
+    Long64_t _total_flux_events_flu0=0; 
+    Long64_t _total_flux_events_flu0_test=0; 
+    Long64_t _total_flux_events_gammaflu1=0; 
+    Long64_t _total_flux_events_gammaflu2=0; 
+    Long64_t _total_flux_events_gammaflu3=0; 
+    Long64_t _total_flux_events_gammaflu_airbox=0; 
+    Long64_t _total_flux_events_neutronflu1=0; 
+    Long64_t _total_flux_events_neutronflu2=0; 
+    Long64_t _total_flux_events_neutronflu3=0; 
+    Long64_t _total_flux_events_neutronflu_airbox=0; 
 
     Double_t _bkg_cpd_kg;
     Double_t _bkg_cpd_kg_err;
@@ -59,11 +67,26 @@ protected :
 
     //histograms
     TH1D *h_NTot;
-    
+    TH1D *h_NTotFlux0;
+    TH1D *h_NGammaFlux1; 
+    TH1D *h_NGammaFlux2;
+    TH1D *h_NGammaFlux3; 
+    TH1D *h_NGammaAirBox;
+    TH1D *h_NNeutronFlux1; 
+    TH1D *h_NNeutronFlux2;
+    TH1D *h_NNeutronFlux3; 
+    TH1D *h_NNeutronAirBox;
+
+   
     TH1D *h_edepDet;
     TH1D *h_edepDet_norm;
     TH1D *h_edepDet_full;
     TH1D *h_edepDet_full_norm;
+    
+    TH1D *h_edepDet_NR;
+    TH1D *h_edepDet_NR_norm;
+    TH1D *h_edepDet_NR_full;
+    TH1D *h_edepDet_NR_full_norm;
     
     TH1D *h_EgammaShield0;
     TH1D *h_EgammaShield0_norm; 
@@ -95,6 +118,32 @@ protected :
     TH1D *h_EallAirBox_full;
     TH1D *h_EallAirBox_full_norm;
     
+    TH1D *h_EneutronShield0;
+    TH1D *h_EneutronShield0_norm; 
+    TH1D *h_EneutronShield0_full;    
+    TH1D *h_EneutronShield0_full_norm;
+
+    TH1D *h_EneutronShield1;
+    TH1D *h_EneutronShield1_norm; 
+    TH1D *h_EneutronShield1_full;    
+    TH1D *h_EneutronShield1_full_norm;
+    
+    TH1D *h_EneutronShield2;
+    TH1D *h_EneutronShield2_norm; 
+    TH1D *h_EneutronShield2_full;    
+    TH1D *h_EneutronShield2_full_norm;
+
+    TH1D *h_EneutronShield3;
+    TH1D *h_EneutronShield3_norm; 
+    TH1D *h_EneutronShield3_full;    
+    TH1D *h_EneutronShield3_full_norm;
+
+    TH1D *h_EneutronAirBox;
+    TH1D *h_EneutronAirBox_norm;
+    TH1D *h_EneutronAirBox_full;
+    TH1D *h_EneutronAirBox_full_norm;
+
+    
     TH1D *h_AbsPxShield0;
     TH1D *h_AbsPyShield0; 
     TH1D *h_AbsPzShield0;    
@@ -115,21 +164,27 @@ protected :
     TH1D *h_AbsPyAirBox; 
     TH1D *h_AbsPzAirBox;    
 
-    TH1D *h_ThetaShield0;
-    TH1D *h_PhiShield0; 
+    TH1D *h_GammaThetaShield0;
+    TH1D *h_GammaPhiShield0; 
+    TH1D *h_GammaThetaShield1;
+    TH1D *h_GammaPhiShield1; 
+    TH1D *h_GammaThetaShield2;
+    TH1D *h_GammaPhiShield2; 
+    TH1D *h_GammaThetaShield3;
+    TH1D *h_GammaPhiShield3; 
+    TH1D *h_GammaThetaAirBox;
+    TH1D *h_GammaPhiAirBox; 
     
-    TH1D *h_ThetaShield1;
-    TH1D *h_PhiShield1; 
-    
-    TH1D *h_ThetaShield2;
-    TH1D *h_PhiShield2; 
-    
-    TH1D *h_ThetaShield3;
-    TH1D *h_PhiShield3; 
-    
-    TH1D *h_ThetaAirBox;
-    TH1D *h_PhiAirBox; 
-    
+    TH1D *h_NeutronThetaShield0;
+    TH1D *h_NeutronPhiShield0; 
+    TH1D *h_NeutronThetaShield1;
+    TH1D *h_NeutronPhiShield1; 
+    TH1D *h_NeutronThetaShield2;
+    TH1D *h_NeutronPhiShield2; 
+    TH1D *h_NeutronThetaShield3;
+    TH1D *h_NeutronPhiShield3; 
+    TH1D *h_NeutronThetaAirBox;
+    TH1D *h_NeutronPhiAirBox; 
 
     TH1D *h_AirBox;
     TH1D *h_AirBox_norm;
