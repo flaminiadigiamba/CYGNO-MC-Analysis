@@ -420,6 +420,11 @@ void CYGNOAnalysis::Loop()
         _total_events += events;
         
         flu0 = n_event_flu0->GetBinContent(2); //primaries entering the shielding0 once
+        
+	gammaflu1 = 0 ; 
+        gammaflu2 = 0 ;
+        gammaflu3 = 0 ;
+        gammaflu_airbox =0; 
         //gammaflu1 = n_event_flugamma1->GetBinContent(2); //gammas entering the shielding1 once
         //gammaflu2 = n_event_flugamma2->GetBinContent(2); //gammas entering the shielding2 once
         //gammaflu3 = n_event_flugamma3->GetBinContent(2); //gammas entering the shielding3 once
@@ -471,6 +476,9 @@ void CYGNOAnalysis::Loop()
         
         nentries = mytree->GetEntriesFast();
         cout<<"Found file "<<*my_file_iter<<" Entries = "<<mytree->GetEntries()<<"  Events = "<<events<<" Total = "<<_total_events<<endl;
+	
+	TBranch* br = (TBranch*)mytree->GetListOfBranches()->FindObject("E_flu");
+        cout << br << endl;
         
         for (Long64_t jentry=0; jentry<nentries;jentry++) { //loop on entries
             
@@ -483,7 +491,7 @@ void CYGNOAnalysis::Loop()
             b_numflu0->GetEntry(jentry);
             //FIXME : _flu branches + NR
             b_energyDep_NR->GetEntry(jentry);
-#ifdef b_E_flu
+            //if (br){ 
 	      b_E_flu->GetEntry(jentry);
               if (E_flu->size()==0)
 	          continue;
@@ -517,7 +525,7 @@ void CYGNOAnalysis::Loop()
               //b_posy_ion->GetEntry(jentry);
               //b_posz_ion->GetEntry(jentry);
 	      //
-#endif 	      //if branch 
+	    //}//if branch 
             if(_smearing == true){
                 this->Smearing();
             }
@@ -526,7 +534,7 @@ void CYGNOAnalysis::Loop()
 	    
             //FIXME : _flu branches
             //All
-#ifdef b_E_flu
+            //if (br){
 	      for (int iflu=0; iflu < E_flu->size(); iflu++){ 
 
                       if(prestepVolNo_flu->at(iflu) ==2 && volNo_flu->at(iflu)==3 && pdg_flu->at(iflu)==22){
@@ -538,7 +546,7 @@ void CYGNOAnalysis::Loop()
                           phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
                           if (phi<0) phi = phi+2*TMath::Pi();
                           h_GammaPhiShield0->Fill(phi);
-                          //cout << "phi = " << acos(-px_flu->at(iflu)*sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu))) << endl;
+	        	  //cout << "phi = " << acos(-px_flu->at(iflu)*sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu))) << endl;
                       }
                       if(prestepVolNo_flu->at(iflu) ==3 && volNo_flu->at(iflu)==4 && pdg_flu->at(iflu)==22){
                           h_EgammaShield1->Fill(E_flu->at(iflu));
@@ -678,7 +686,7 @@ void CYGNOAnalysis::Loop()
               //for (int iion = 0; iion < E_ion->size(); iion++){
 	      //        h3_xyz_ion->Fill(posx_ion->at(iion),posy_ion->at(iion),posz_ion->at(iion));	
               //}
-#endif
+	    //}  //end if branch exist
               if(energyDep >0.){
                   h_edepDet->Fill(energyDep);
                   h_edepDet_norm->Fill(energyDep);
@@ -709,11 +717,11 @@ void CYGNOAnalysis::Loop()
     h_NGammaFlux1->SetBinContent(1,_total_flux_events_gammaflu1);
     h_NGammaFlux2->SetBinContent(1,_total_flux_events_gammaflu2);
     h_NGammaFlux3->SetBinContent(1,_total_flux_events_gammaflu3);
-    h_NGammaAirBox->SetBinContent(1,1,_total_flux_events_gammaflu_airbox);
+    h_NGammaAirBox->SetBinContent(1,_total_flux_events_gammaflu_airbox);
     h_NNeutronFlux1->SetBinContent(1,_total_flux_events_neutronflu1);
     h_NNeutronFlux2->SetBinContent(1,_total_flux_events_neutronflu2);
     h_NNeutronFlux3->SetBinContent(1,_total_flux_events_neutronflu3);
-    h_NNeutronAirBox->SetBinContent(1,1,_total_flux_events_neutronflu_airbox);
+    h_NNeutronAirBox->SetBinContent(1,_total_flux_events_neutronflu_airbox);
 
     //if (_externalflux){
     //    _total_flux_events += h_EgammaShield0->GetEntries();
@@ -757,13 +765,14 @@ void CYGNOAnalysis::Normalize(){
     Double_t norm_flu_airbox, norm_flu_airbox_full;
     Double_t surface_Shield0, surface_Shield1, surface_Shield2, surface_Shield3, surface_AirBox;
    
- 
-    Double_t AirBox_x = 1.45;
-    Double_t AirBox_y = 1.45;
-    Double_t AirBox_z = 2.65; //here x and z swiped wrt CYGNODetectorConstruction 
-    //Double_t AirBox_x = 2;
-    //Double_t AirBox_y = 2;
-    //Double_t AirBox_z = 3; //here x and z swiped wrt CYGNODetectorConstruction 
+    //FIXME CYGNO 
+    //Double_t AirBox_x = 1.45;
+    //Double_t AirBox_y = 1.45;
+    //Double_t AirBox_z = 2.65; //here x and z swiped wrt CYGNODetectorConstruction 
+    //FIXME LIME
+    Double_t AirBox_x = 0.8;
+    Double_t AirBox_y = 0.8;
+    Double_t AirBox_z = 2; //here x and z swiped wrt CYGNODetectorConstruction 
      
     Double_t ndays;
     if (!_externalflux){
@@ -854,11 +863,16 @@ void CYGNOAnalysis::Normalize(){
     h_EgammaAirBox_norm->GetYaxis()->SetTitle("Flux [#gamma cm^{-2} s^{-1} keV^{-1}")       ;
     h_EgammaAirBox_full_norm->GetYaxis()->SetTitle("Flux [#gamma cm^{-2} s^{-1} keV^{-1}")  ;
 
-    cout << "Gamma Flux entering Shield0 " << h_EgammaShield0_full_norm->Integral()*binwidth_full << " cm^-2 s^-1" << endl;
-    cout << "Gamma Flux entering Shield1 " << h_EgammaShield1_full_norm->Integral()*binwidth_full << " cm^-2 s^-1" << endl;
-    cout << "Gamma Flux entering Shield2 " << h_EgammaShield2_full_norm->Integral()*binwidth_full << " cm^-2 s^-1" << endl;
-    cout << "Gamma Flux entering Shield3 " << h_EgammaShield3_full_norm->Integral()*binwidth_full << " cm^-2 s^-1" << endl;
-    cout << "Gamma Flux entering AirBox " <<  h_EgammaAirBox_full_norm->Integral() *binwidth_full << " cm^-2 s^-1" << endl;
+    //cout << "Gamma Flux entering Shield0 " << h_EgammaShield0_full_norm->Integral()*binwidth_full << " cm^-2 s^-1" << endl;
+    //cout << "Gamma Flux entering Shield1 " << h_EgammaShield1_full_norm->Integral()*binwidth_full << " cm^-2 s^-1" << endl;
+    //cout << "Gamma Flux entering Shield2 " << h_EgammaShield2_full_norm->Integral()*binwidth_full << " cm^-2 s^-1" << endl;
+    //cout << "Gamma Flux entering Shield3 " << h_EgammaShield3_full_norm->Integral()*binwidth_full << " cm^-2 s^-1" << endl;
+    //cout << "Gamma Flux entering AirBox " <<  h_EgammaAirBox_full_norm->Integral() *binwidth_full << " cm^-2 s^-1" << endl;
+    cout << "Flux of primary particles entering Shield0 " << _total_flux_events_flu0*norm_flu0/surface_Shield0/1.e4 << " cm^-2 s^-1" << endl;
+    cout << "Gamma Flux entering Shield1 " << _total_flux_events_gammaflu1*norm_flu0/surface_Shield1/1.e4<< " cm^-2 s^-1" << endl;
+    cout << "Gamma Flux entering Shield2 " << _total_flux_events_gammaflu2*norm_flu0/surface_Shield2/1.e4<< " cm^-2 s^-1" << endl;
+    cout << "Gamma Flux entering Shield3 " << _total_flux_events_gammaflu3*norm_flu0/surface_Shield3/1.e4<< " cm^-2 s^-1" << endl;
+    cout << "Gamma Flux entering AirBox " <<  _total_flux_events_gammaflu_airbox*norm_flu0/surface_AirBox/1.e4 << " cm^-2 s^-1" << endl;
    
 
     //normalize variable binning histograms
@@ -885,11 +899,17 @@ void CYGNOAnalysis::Normalize(){
     h_EneutronAirBox_norm->GetYaxis()->SetTitle("Flux [n cm^{-2} s^{-1}")        ;
     h_EneutronAirBox_full_norm->GetYaxis()->SetTitle("Flux [n cm^{-2} s^{-1}")   ;
 
-    cout << "Neutron Flux entering Shield0 " << h_EneutronShield0_full_norm->Integral() << " cm^-2 s^-1" << endl;
-    cout << "Neutron Flux entering Shield1 " << h_EneutronShield1_full_norm->Integral() << " cm^-2 s^-1" << endl;
-    cout << "Neutron Flux entering Shield2 " << h_EneutronShield2_full_norm->Integral() << " cm^-2 s^-1" << endl;
-    cout << "Neutron Flux entering Shield3 " << h_EneutronShield3_full_norm->Integral() << " cm^-2 s^-1" << endl;
-    cout << "Neutron Flux entering AirBox " <<  h_EneutronAirBox_full_norm->Integral()  << " cm^-2 s^-1" << endl;
+    //cout << "Neutron Flux entering Shield0 " << h_EneutronShield0_full_norm->Integral() << " cm^-2 s^-1" << endl;
+    //cout << "Neutron Flux entering Shield1 " << h_EneutronShield1_full_norm->Integral() << " cm^-2 s^-1" << endl;
+    //cout << "Neutron Flux entering Shield2 " << h_EneutronShield2_full_norm->Integral() << " cm^-2 s^-1" << endl;
+    //cout << "Neutron Flux entering Shield3 " << h_EneutronShield3_full_norm->Integral() << " cm^-2 s^-1" << endl;
+    //cout << "Neutron Flux entering AirBox " <<  h_EneutronAirBox_full_norm->Integral()  << " cm^-2 s^-1" << endl;
+    
+    //cout << "Neutron Flux entering Shield0 " << _total_flux_events_neutronflu0 << " cm^-2 s^-1" << endl;
+    cout << "Neutron Flux entering Shield1 " << norm_flu0*_total_flux_events_neutronflu1/surface_Shield1/1.e4 << " cm^-2 s^-1" << endl;
+    cout << "Neutron Flux entering Shield2 " << norm_flu0*_total_flux_events_neutronflu2/surface_Shield2/1.e4 << " cm^-2 s^-1" << endl;
+    cout << "Neutron Flux entering Shield3 " << norm_flu0*_total_flux_events_neutronflu3/surface_Shield3/1.e4 << " cm^-2 s^-1" << endl;
+    cout << "Neutron Flux entering AirBox " <<  norm_flu0*_total_flux_events_neutronflu_airbox/surface_AirBox/1.e4  << " cm^-2 s^-1" << endl;
   
 }
 

@@ -55,6 +55,10 @@ protected :
     Double_t _bkg_cpd_kg_err;
     Double_t _bkg_cpd_kg_kev;
     Double_t _bkg_cpd_kg_kev_err;
+    Double_t _bkg_cpd_kg_NR;
+    Double_t _bkg_cpd_kg_NR_err;
+    Double_t _bkg_cpd_kg_kev_NR;
+    Double_t _bkg_cpd_kg_kev_NR_err;
     
     Bool_t _smearing;
     
