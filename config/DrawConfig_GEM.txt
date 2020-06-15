@@ -1,0 +1,54 @@
+[238U]
+listfiles = 
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/238U_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/234Th_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/234U_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/234U_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/222Rn_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/218Po_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/214Pb_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/214Bi_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/214Po_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/210Pb_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/210Bi_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/210Po_RadioactiveDecayFromGEM.root
+
+[232Th]
+listfiles = 
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/232Th_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/228Ra_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/228Ac_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/228Th_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/224Ra_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/220Rn_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/216Po_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/212Pb_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/212Bi_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/212Po_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/208Tl_RadioactiveDecayFromGEM.root
+
+[235U]
+listfiles = 
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/235U_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/231Th_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/231Pa_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/227Ac_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/227Th_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/223Ra_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/219Rn_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/215Po_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/211Pb_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/211Bi_RadioactiveDecayFromGEM.root
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/207Tl_RadioactiveDecayFromGEM.root
+
+[40K]
+listfiles = 
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/40K_RadioactiveDecayFromGEM.root
+
+[60Co]
+listfiles =  
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/60Co_RadioactiveDecayFromGEM.root
+
+[137Cs]
+listfiles = 
+	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/137Cs_RadioactiveDecayFromGEM.root
