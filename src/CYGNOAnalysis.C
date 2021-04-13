@@ -491,41 +491,41 @@ void CYGNOAnalysis::Loop()
             b_numflu0->GetEntry(jentry);
             //FIXME : _flu branches + NR
             b_energyDep_NR->GetEntry(jentry);
-            //if (br){ 
-	      b_E_flu->GetEntry(jentry);
-              if (E_flu->size()==0)
-	          continue;
+            ////if (br){ 
+	    //  b_E_flu->GetEntry(jentry);
+            //  if (E_flu->size()==0)
+	    //      continue;
 
-              b_trackid_flu->GetEntry(jentry);
-              b_volNo_flu->GetEntry(jentry);
-              b_prestepVolNo_flu->GetEntry(jentry);
-              b_pdg_flu->GetEntry(jentry);
-              //b_poststepx_flu->GetEntry(jentry);
-              //b_poststepy_flu->GetEntry(jentry);
-              //b_poststepz_flu->GetEntry(jentry);
-              b_px_flu->GetEntry(jentry);
-              b_py_flu->GetEntry(jentry);
-              b_pz_flu->GetEntry(jentry);
-              b_E_ele->GetEntry(jentry);
-              b_parentid_ele->GetEntry(jentry);
-              b_trackid_ele->GetEntry(jentry);
-              //b_E_pos->GetEntry(jentry);
-              //b_E_pro->GetEntry(jentry);
-              //b_E_ion->GetEntry(jentry);
-              b_poststepx_ele->GetEntry(jentry);
-              b_poststepy_ele->GetEntry(jentry);
-              b_poststepz_ele->GetEntry(jentry);
-              //b_poststepx_pos->GetEntry(jentry);
-              //b_poststepy_pos->GetEntry(jentry);
-              //b_poststepz_pos->GetEntry(jentry);
-              //b_poststepx_pro->GetEntry(jentry);
-              //b_poststepy_pro->GetEntry(jentry);
-              //b_poststepz_pro->GetEntry(jentry);
-              //b_posx_ion->GetEntry(jentry);
-              //b_posy_ion->GetEntry(jentry);
-              //b_posz_ion->GetEntry(jentry);
-	      //
-	    //}//if branch 
+            //  b_trackid_flu->GetEntry(jentry);
+            //  b_volNo_flu->GetEntry(jentry);
+            //  b_prestepVolNo_flu->GetEntry(jentry);
+            //  b_pdg_flu->GetEntry(jentry);
+            //  //b_poststepx_flu->GetEntry(jentry);
+            //  //b_poststepy_flu->GetEntry(jentry);
+            //  //b_poststepz_flu->GetEntry(jentry);
+            //  b_px_flu->GetEntry(jentry);
+            //  b_py_flu->GetEntry(jentry);
+            //  b_pz_flu->GetEntry(jentry);
+            //  b_E_ele->GetEntry(jentry);
+            //  b_parentid_ele->GetEntry(jentry);
+            //  b_trackid_ele->GetEntry(jentry);
+            //  //b_E_pos->GetEntry(jentry);
+            //  //b_E_pro->GetEntry(jentry);
+            //  //b_E_ion->GetEntry(jentry);
+            //  b_poststepx_ele->GetEntry(jentry);
+            //  b_poststepy_ele->GetEntry(jentry);
+            //  b_poststepz_ele->GetEntry(jentry);
+            //  //b_poststepx_pos->GetEntry(jentry);
+            //  //b_poststepy_pos->GetEntry(jentry);
+            //  //b_poststepz_pos->GetEntry(jentry);
+            //  //b_poststepx_pro->GetEntry(jentry);
+            //  //b_poststepy_pro->GetEntry(jentry);
+            //  //b_poststepz_pro->GetEntry(jentry);
+            //  //b_posx_ion->GetEntry(jentry);
+            //  //b_posy_ion->GetEntry(jentry);
+            //  //b_posz_ion->GetEntry(jentry);
+	    //  //
+	    ////}//if branch 
             if(_smearing == true){
                 this->Smearing();
             }
@@ -534,149 +534,149 @@ void CYGNOAnalysis::Loop()
 	    
             //FIXME : _flu branches
             //All
-            //if (br){
-	      for (int iflu=0; iflu < E_flu->size(); iflu++){ 
+            ////if (br){
+	    //  for (int iflu=0; iflu < E_flu->size(); iflu++){ 
 
-                      if(prestepVolNo_flu->at(iflu) ==2 && volNo_flu->at(iflu)==3 && pdg_flu->at(iflu)==22){
-                          h_EgammaShield0->Fill(E_flu->at(iflu));
-                          h_EgammaShield0_norm->Fill(E_flu->at(iflu)); 
-                          h_EgammaShield0_full->Fill(E_flu->at(iflu));    
-                          h_EgammaShield0_full_norm->Fill(E_flu->at(iflu));
-                          h_GammaThetaShield0->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
-                          phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
-                          if (phi<0) phi = phi+2*TMath::Pi();
-                          h_GammaPhiShield0->Fill(phi);
-	        	  //cout << "phi = " << acos(-px_flu->at(iflu)*sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu))) << endl;
-                      }
-                      if(prestepVolNo_flu->at(iflu) ==3 && volNo_flu->at(iflu)==4 && pdg_flu->at(iflu)==22){
-                          h_EgammaShield1->Fill(E_flu->at(iflu));
-                          h_EgammaShield1_norm->Fill(E_flu->at(iflu)); 
-                          h_EgammaShield1_full->Fill(E_flu->at(iflu));    
-                          h_EgammaShield1_full_norm->Fill(E_flu->at(iflu));
-                          h_GammaThetaShield1->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
-                          phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
-                          if (phi<0) phi = phi+2*TMath::Pi();
-                          h_GammaPhiShield1->Fill(phi);
-                          ////h_PhiShield1->Fill(atan2(py_flu->at(iflu)/px_flu->at(iflu)));
-                          ////Phi defined between -pi and pi
-                      }
-                          
-                      if(prestepVolNo_flu->at(iflu) ==4 && volNo_flu->at(iflu)==5 && pdg_flu->at(iflu)==22){
-                          h_EgammaShield2->Fill(E_flu->at(iflu));
-                          h_EgammaShield2_norm->Fill(E_flu->at(iflu)); 
-                          h_EgammaShield2_full->Fill(E_flu->at(iflu));    
-                          h_EgammaShield2_full_norm->Fill(E_flu->at(iflu));
-                          h_GammaThetaShield2->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
-                          phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
-                          if (phi<0) phi = phi+2*TMath::Pi();
-                          h_GammaPhiShield2->Fill(phi);
-                      }
+            //          if(prestepVolNo_flu->at(iflu) ==2 && volNo_flu->at(iflu)==3 && pdg_flu->at(iflu)==22){
+            //              h_EgammaShield0->Fill(E_flu->at(iflu));
+            //              h_EgammaShield0_norm->Fill(E_flu->at(iflu)); 
+            //              h_EgammaShield0_full->Fill(E_flu->at(iflu));    
+            //              h_EgammaShield0_full_norm->Fill(E_flu->at(iflu));
+            //              h_GammaThetaShield0->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+            //              phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+            //              if (phi<0) phi = phi+2*TMath::Pi();
+            //              h_GammaPhiShield0->Fill(phi);
+	    //    	  //cout << "phi = " << acos(-px_flu->at(iflu)*sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu))) << endl;
+            //          }
+            //          if(prestepVolNo_flu->at(iflu) ==3 && volNo_flu->at(iflu)==4 && pdg_flu->at(iflu)==22){
+            //              h_EgammaShield1->Fill(E_flu->at(iflu));
+            //              h_EgammaShield1_norm->Fill(E_flu->at(iflu)); 
+            //              h_EgammaShield1_full->Fill(E_flu->at(iflu));    
+            //              h_EgammaShield1_full_norm->Fill(E_flu->at(iflu));
+            //              h_GammaThetaShield1->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+            //              phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+            //              if (phi<0) phi = phi+2*TMath::Pi();
+            //              h_GammaPhiShield1->Fill(phi);
+            //              ////h_PhiShield1->Fill(atan2(py_flu->at(iflu)/px_flu->at(iflu)));
+            //              ////Phi defined between -pi and pi
+            //          }
+            //              
+            //          if(prestepVolNo_flu->at(iflu) ==4 && volNo_flu->at(iflu)==5 && pdg_flu->at(iflu)==22){
+            //              h_EgammaShield2->Fill(E_flu->at(iflu));
+            //              h_EgammaShield2_norm->Fill(E_flu->at(iflu)); 
+            //              h_EgammaShield2_full->Fill(E_flu->at(iflu));    
+            //              h_EgammaShield2_full_norm->Fill(E_flu->at(iflu));
+            //              h_GammaThetaShield2->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+            //              phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+            //              if (phi<0) phi = phi+2*TMath::Pi();
+            //              h_GammaPhiShield2->Fill(phi);
+            //          }
         
-                      if(prestepVolNo_flu->at(iflu) ==5 && volNo_flu->at(iflu)==6 && pdg_flu->at(iflu)==22){
-                          h_EgammaShield3->Fill(E_flu->at(iflu));
-                          h_EgammaShield3_norm->Fill(E_flu->at(iflu)); 
-                          h_EgammaShield3_full->Fill(E_flu->at(iflu));    
-                          h_EgammaShield3_full_norm->Fill(E_flu->at(iflu));
-                          h_GammaThetaShield3->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
-                          phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
-                          if (phi<0) phi = phi+2*TMath::Pi();
-                          h_GammaPhiShield3->Fill(phi);
-                      }
+            //          if(prestepVolNo_flu->at(iflu) ==5 && volNo_flu->at(iflu)==6 && pdg_flu->at(iflu)==22){
+            //              h_EgammaShield3->Fill(E_flu->at(iflu));
+            //              h_EgammaShield3_norm->Fill(E_flu->at(iflu)); 
+            //              h_EgammaShield3_full->Fill(E_flu->at(iflu));    
+            //              h_EgammaShield3_full_norm->Fill(E_flu->at(iflu));
+            //              h_GammaThetaShield3->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+            //              phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+            //              if (phi<0) phi = phi+2*TMath::Pi();
+            //              h_GammaPhiShield3->Fill(phi);
+            //          }
         
-                      if(prestepVolNo_flu->at(iflu) ==6 && volNo_flu->at(iflu)==7 && pdg_flu->at(iflu)==22){
-                          h_EgammaAirBox->Fill(E_flu->at(iflu));
-                          h_EgammaAirBox_norm->Fill(E_flu->at(iflu));
-                          h_EgammaAirBox_full->Fill(E_flu->at(iflu));
-                          h_EgammaAirBox_full_norm->Fill(E_flu->at(iflu));
-                          h_GammaThetaAirBox->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
-                          phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
-                          if (phi<0) phi = phi+2*TMath::Pi();
-                          h_GammaPhiAirBox->Fill(phi);
-                      }
+            //          if(prestepVolNo_flu->at(iflu) ==6 && volNo_flu->at(iflu)==7 && pdg_flu->at(iflu)==22){
+            //              h_EgammaAirBox->Fill(E_flu->at(iflu));
+            //              h_EgammaAirBox_norm->Fill(E_flu->at(iflu));
+            //              h_EgammaAirBox_full->Fill(E_flu->at(iflu));
+            //              h_EgammaAirBox_full_norm->Fill(E_flu->at(iflu));
+            //              h_GammaThetaAirBox->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+            //              phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+            //              if (phi<0) phi = phi+2*TMath::Pi();
+            //              h_GammaPhiAirBox->Fill(phi);
+            //          }
         
-                      if(prestepVolNo_flu->at(iflu) ==6 && volNo_flu->at(iflu)==7){
-                          h_EallAirBox->Fill(E_flu->at(iflu));
-                          h_EallAirBox_norm->Fill(E_flu->at(iflu));
-                          h_EallAirBox_full->Fill(E_flu->at(iflu));
-                          h_EallAirBox_full_norm->Fill(E_flu->at(iflu));
-                      }
+            //          if(prestepVolNo_flu->at(iflu) ==6 && volNo_flu->at(iflu)==7){
+            //              h_EallAirBox->Fill(E_flu->at(iflu));
+            //              h_EallAirBox_norm->Fill(E_flu->at(iflu));
+            //              h_EallAirBox_full->Fill(E_flu->at(iflu));
+            //              h_EallAirBox_full_norm->Fill(E_flu->at(iflu));
+            //          }
         
-                      if(prestepVolNo_flu->at(iflu) ==2 && volNo_flu->at(iflu)==3 && pdg_flu->at(iflu)==2112){
-                          h_EneutronShield0->Fill(E_flu->at(iflu)-939565.36);
-                          h_EneutronShield0_norm->Fill(E_flu->at(iflu)-939565.36); 
-                          h_EneutronShield0_full->Fill(E_flu->at(iflu)-939565.36);    
-                          h_EneutronShield0_full_norm->Fill(E_flu->at(iflu)-939565.36);
-                          h_NeutronThetaShield0->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
-                          phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
-                          if (phi<0) phi = phi+2*TMath::Pi();
-                          h_NeutronPhiShield0->Fill(phi);
-                      }
-                      if(prestepVolNo_flu->at(iflu) ==3 && volNo_flu->at(iflu)==4 && pdg_flu->at(iflu)==2112){
-                          h_EneutronShield1->Fill(E_flu->at(iflu)-939565.36);
-                          h_EneutronShield1_norm->Fill(E_flu->at(iflu)-939565.36); 
-                          h_EneutronShield1_full->Fill(E_flu->at(iflu)-939565.36);    
-                          h_EneutronShield1_full_norm->Fill(E_flu->at(iflu)-939565.36);
-                          h_NeutronThetaShield1->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
-                          phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
-                          if (phi<0) phi = phi+2*TMath::Pi();
-                          h_NeutronPhiShield1->Fill(phi);
-                      }
-                          
-                      if(prestepVolNo_flu->at(iflu) ==4 && volNo_flu->at(iflu)==5 && pdg_flu->at(iflu)==2112){
-                          h_EneutronShield2->Fill(E_flu->at(iflu)-939565.36);
-                          h_EneutronShield2_norm->Fill(E_flu->at(iflu)-939565.36); 
-                          h_EneutronShield2_full->Fill(E_flu->at(iflu)-939565.36);    
-                          h_EneutronShield2_full_norm->Fill(E_flu->at(iflu)-939565.36);
-                          h_NeutronThetaShield2->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
-                          phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
-                          if (phi<0) phi = phi+2*TMath::Pi();
-                          h_NeutronPhiShield2->Fill(phi);
-                      }
+            //          if(prestepVolNo_flu->at(iflu) ==2 && volNo_flu->at(iflu)==3 && pdg_flu->at(iflu)==2112){
+            //              h_EneutronShield0->Fill(E_flu->at(iflu)-939565.36);
+            //              h_EneutronShield0_norm->Fill(E_flu->at(iflu)-939565.36); 
+            //              h_EneutronShield0_full->Fill(E_flu->at(iflu)-939565.36);    
+            //              h_EneutronShield0_full_norm->Fill(E_flu->at(iflu)-939565.36);
+            //              h_NeutronThetaShield0->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+            //              phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+            //              if (phi<0) phi = phi+2*TMath::Pi();
+            //              h_NeutronPhiShield0->Fill(phi);
+            //          }
+            //          if(prestepVolNo_flu->at(iflu) ==3 && volNo_flu->at(iflu)==4 && pdg_flu->at(iflu)==2112){
+            //              h_EneutronShield1->Fill(E_flu->at(iflu)-939565.36);
+            //              h_EneutronShield1_norm->Fill(E_flu->at(iflu)-939565.36); 
+            //              h_EneutronShield1_full->Fill(E_flu->at(iflu)-939565.36);    
+            //              h_EneutronShield1_full_norm->Fill(E_flu->at(iflu)-939565.36);
+            //              h_NeutronThetaShield1->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+            //              phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+            //              if (phi<0) phi = phi+2*TMath::Pi();
+            //              h_NeutronPhiShield1->Fill(phi);
+            //          }
+            //              
+            //          if(prestepVolNo_flu->at(iflu) ==4 && volNo_flu->at(iflu)==5 && pdg_flu->at(iflu)==2112){
+            //              h_EneutronShield2->Fill(E_flu->at(iflu)-939565.36);
+            //              h_EneutronShield2_norm->Fill(E_flu->at(iflu)-939565.36); 
+            //              h_EneutronShield2_full->Fill(E_flu->at(iflu)-939565.36);    
+            //              h_EneutronShield2_full_norm->Fill(E_flu->at(iflu)-939565.36);
+            //              h_NeutronThetaShield2->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+            //              phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+            //              if (phi<0) phi = phi+2*TMath::Pi();
+            //              h_NeutronPhiShield2->Fill(phi);
+            //          }
         
-                      if(prestepVolNo_flu->at(iflu) ==5 && volNo_flu->at(iflu)==6 && pdg_flu->at(iflu)==2112){
-                          h_EneutronShield3->Fill(E_flu->at(iflu)-939565.36);
-                          h_EneutronShield3_norm->Fill(E_flu->at(iflu)-939565.36); 
-                          h_EneutronShield3_full->Fill(E_flu->at(iflu)-939565.36);    
-                          h_EneutronShield3_full_norm->Fill(E_flu->at(iflu)-939565.36);
-                          h_NeutronThetaShield3->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
-                          phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
-                          if (phi<0) phi = phi+2*TMath::Pi();
-                          h_NeutronPhiShield3->Fill(phi);
-                      }
+            //          if(prestepVolNo_flu->at(iflu) ==5 && volNo_flu->at(iflu)==6 && pdg_flu->at(iflu)==2112){
+            //              h_EneutronShield3->Fill(E_flu->at(iflu)-939565.36);
+            //              h_EneutronShield3_norm->Fill(E_flu->at(iflu)-939565.36); 
+            //              h_EneutronShield3_full->Fill(E_flu->at(iflu)-939565.36);    
+            //              h_EneutronShield3_full_norm->Fill(E_flu->at(iflu)-939565.36);
+            //              h_NeutronThetaShield3->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+            //              phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+            //              if (phi<0) phi = phi+2*TMath::Pi();
+            //              h_NeutronPhiShield3->Fill(phi);
+            //          }
         
-                      if(prestepVolNo_flu->at(iflu) ==6 && volNo_flu->at(iflu)==7 && pdg_flu->at(iflu)==2112){
-                          h_EneutronAirBox->Fill(E_flu->at(iflu)-939565.36);
-                          h_EneutronAirBox_norm->Fill(E_flu->at(iflu)-939565.36);
-                          h_EneutronAirBox_full->Fill(E_flu->at(iflu)-939565.36);
-                          h_EneutronAirBox_full_norm->Fill(E_flu->at(iflu)-939565.36);
-                          h_NeutronThetaAirBox->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
-                          phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
-                          if (phi<0) phi = phi+2*TMath::Pi();
-                          h_NeutronPhiAirBox->Fill(phi);
-                      }
+            //          if(prestepVolNo_flu->at(iflu) ==6 && volNo_flu->at(iflu)==7 && pdg_flu->at(iflu)==2112){
+            //              h_EneutronAirBox->Fill(E_flu->at(iflu)-939565.36);
+            //              h_EneutronAirBox_norm->Fill(E_flu->at(iflu)-939565.36);
+            //              h_EneutronAirBox_full->Fill(E_flu->at(iflu)-939565.36);
+            //              h_EneutronAirBox_full_norm->Fill(E_flu->at(iflu)-939565.36);
+            //              h_NeutronThetaAirBox->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+            //              phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+            //              if (phi<0) phi = phi+2*TMath::Pi();
+            //              h_NeutronPhiAirBox->Fill(phi);
+            //          }
         
-                }
-             
-             //FIXME : double counting ??
-             for (int iele = 0; iele < E_ele->size(); iele++){
-                     Bool_t doublecount = false;
-	             if(iele!=0 && parentid_ele->at(iele)!=trackid_ele->at(iele-1) && parentid_ele->at(iele)!=parentid_ele->at(iele-1)) {
-                         // method to be checked...
-                         //for (int jele=0; jele<iele; jele++){
-                         //    if(parentid_ele->at(iele)==trackid_ele->at(jele)){
-                         //        doublecount = true;
-                         //        break;
-                         //    }
-                         //}
-                         if (!doublecount){
-                             h3_xyz_ele->Fill(poststepx_ele->at(iele),poststepy_ele->at(iele),poststepz_ele->at(iele));	
-                             
-                             if (TMath::Abs(poststepx_ele->at(iele))<510 && TMath::Abs(poststepy_ele->at(iele))<510 && TMath::Abs(poststepz_ele->at(iele))<510 ){
-	                          h3_xyz_ele_fiducial->Fill(poststepx_ele->at(iele),poststepy_ele->at(iele),poststepz_ele->at(iele));	
-	                     }
-                         }
-                     }
-              }
+            //    }
+            // 
+            // //FIXME : double counting ??
+            // for (int iele = 0; iele < E_ele->size(); iele++){
+            //         Bool_t doublecount = false;
+	    //         if(iele!=0 && parentid_ele->at(iele)!=trackid_ele->at(iele-1) && parentid_ele->at(iele)!=parentid_ele->at(iele-1)) {
+            //             // method to be checked...
+            //             //for (int jele=0; jele<iele; jele++){
+            //             //    if(parentid_ele->at(iele)==trackid_ele->at(jele)){
+            //             //        doublecount = true;
+            //             //        break;
+            //             //    }
+            //             //}
+            //             if (!doublecount){
+            //                 h3_xyz_ele->Fill(poststepx_ele->at(iele),poststepy_ele->at(iele),poststepz_ele->at(iele));	
+            //                 
+            //                 if (TMath::Abs(poststepx_ele->at(iele))<510 && TMath::Abs(poststepy_ele->at(iele))<510 && TMath::Abs(poststepz_ele->at(iele))<510 ){
+	    //                      h3_xyz_ele_fiducial->Fill(poststepx_ele->at(iele),poststepy_ele->at(iele),poststepz_ele->at(iele));	
+	    //                 }
+            //             }
+            //         }
+            //  }
               //for (int ipos = 0; ipos < E_pos->size(); ipos++){
 	      //        h3_xyz_pos->Fill(poststepx_pos->at(ipos),poststepy_pos->at(ipos),poststepz_pos->at(ipos));	
               //}
@@ -766,13 +766,13 @@ void CYGNOAnalysis::Normalize(){
     Double_t surface_Shield0, surface_Shield1, surface_Shield2, surface_Shield3, surface_AirBox;
    
     //FIXME CYGNO 
-    //Double_t AirBox_x = 1.45;
-    //Double_t AirBox_y = 1.45;
-    //Double_t AirBox_z = 2.65; //here x and z swiped wrt CYGNODetectorConstruction 
+    Double_t AirBox_x = 1.45;
+    Double_t AirBox_y = 1.45;
+    Double_t AirBox_z = 2.65; //here x and z swiped wrt CYGNODetectorConstruction 
     //FIXME LIME
-    Double_t AirBox_x = 0.8;
-    Double_t AirBox_y = 0.8;
-    Double_t AirBox_z = 2; //here x and z swiped wrt CYGNODetectorConstruction 
+    //Double_t AirBox_x = 0.8;
+    //Double_t AirBox_y = 0.8;
+    //Double_t AirBox_z = 2; //here x and z swiped wrt CYGNODetectorConstruction 
      
     Double_t ndays;
     if (!_externalflux){
@@ -780,7 +780,7 @@ void CYGNOAnalysis::Normalize(){
       ndays = _total_events/ndec1d;
     }
     else{
-      Double_t nflu_1d = _externalflux_value * (2*(AirBox_x+2*_tot_shield_thickness)*(2+AirBox_y*_tot_shield_thickness) + 4*(AirBox_y+2*_tot_shield_thickness)*(AirBox_z+2*_tot_shield_thickness)) * 10000. * 86400.;
+      Double_t nflu_1d = _externalflux_value * (2*(AirBox_x+2*_tot_shield_thickness)*(AirBox_y+2*_tot_shield_thickness) + 4*(AirBox_y+2*_tot_shield_thickness)*(AirBox_z+2*_tot_shield_thickness)) * 10000. * 86400.;
       //ndays = _total_flux_events/ nflu_1d;
       ndays = _total_flux_events_flu0/ nflu_1d;
     } 

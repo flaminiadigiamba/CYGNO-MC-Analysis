@@ -87,6 +87,7 @@ if __name__ == '__main__':
   color = [kAzure-1,kAzure+1,kTeal-9,kTeal-5,kMagenta-7,kPink-9,kViolet-6,kViolet-4,kBlue+3,kBlue+2,kGray+1,kGray+2,kGray+3]
  
  
+  #list_input = "lists/list4plot_Cathode.txt"
   #list_input = "lists/list4plot_GEM.txt"
   #list_input = "lists/list4plot_AcrylicBox.txt"
   #list_input = "list_Shield2Activity_5Pb5Cu.txt"
@@ -159,13 +160,13 @@ if __name__ == '__main__':
     #print("rate [1-20] keV of "+os.path.basename(line.strip(".root\n"))+"  = "+str(h[i].Integral(h[i].FindBin(1),h[i].FindBin(20)-1)*h[i].GetBinWidth(1)*365*1.6)+" cts/yr")
     #print("rate [1-20] keV of NR of "+os.path.basename(line.strip(".root\n"))+"  = "+str(h_NR[i].Integral(h_NR[i].FindBin(1),h_NR[i].FindBin(20)-1)*h_NR[i].GetBinWidth(1)*365*1.6)+" cts/yr")
     print("rate [1-20] keV of "+key+"  = "+str(h[i].Integral(h[i].FindBin(1),h[i].FindBin(20)-1)*h[i].GetBinWidth(1)*365*1.6)+" cts/yr")
-    #if not (h[i].Integral() == 0):
-    #  time_eq = (h_noNorm[i].Integral()/h[i].Integral())/(1.6*h[i].GetBinWidth(1))
-    #else:
-    #  time_eq = -999
-    ##print("Equivalent time of "+os.path.basename(line.strip(".root\n"))+" simulation: "+str(time_eq)+" days")
+    if not (h[i].Integral() == 0):
+      time_eq = (h_noNorm[i].Integral()/h[i].Integral())/(1.6*h[i].GetBinWidth(1))
+    else:
+      time_eq = -999
+    #print("Equivalent time of "+os.path.basename(line.strip(".root\n"))+" simulation: "+str(time_eq)+" days")
     #print("Equivalent time of "+key+" simulation: "+str(time_eq)+" days")
-    #print("")
+    print("")
  
     i+=1
 
