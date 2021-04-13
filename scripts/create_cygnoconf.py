@@ -65,12 +65,13 @@ mass = {
 "cad_turns_support_physical":34.7248,
 "cad_field_cage_physical":42.4915,
 "cad_gem_support_physical":15.7757,
-"cad_gem_physical":0.4684,
+"GEM":0.705899, #both sides
 "cad_cathode_frame_physical":56.5125,
 "cad_cathode_physical":0.98408,
 "TPC_gas":0.98408,
 "CYGNO_gas":2*0.810438,
 "CameraBody":18*2.1275,
+"CameraLens":18*0.194998,
 
 
 }
