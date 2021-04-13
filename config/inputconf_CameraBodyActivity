@@ -1,12 +1,43 @@
 ### Volume_name    Isotope                        Activity[Bq/kg]    Smearing[0 or 1]    T1/2 
-CameraBody             40K                            0.89306698              0              -999
-CameraBody             60Co                           0.00564042              0              -999
-CameraBody             137Cs                          0.04230317              0              -999
+CameraBody             40K                            0.876              0              -999
+CameraBody             137Cs                          41.5e-3            0              -999
+CameraBody             60Co                           5.53e-3            0              -999
 ###U238 chain
-CameraBody             214Pb                          0.84606345           0               -999
-CameraBody             214Bi                          0.84606345           0               -999
+CameraBody             238U                           3.23             0               -999
+CameraBody             234Th                          3.23             0               -999
+CameraBody             234U                           3.23             0               -999
+##CameraBody             234mPa                       3.23             0               -999
+CameraBody             230Th                          3.23              0               -999
+CameraBody             226Ra                          0.830              0               -999
+CameraBody             222Rn                          0.830              0               -999
+CameraBody             218Po                          0.830             0               -999
+CameraBody             214Pb                          0.830              0               -999
+CameraBody             214Bi                          0.830              0               -999
+CameraBody             214Po                          0.830              0               -999
+CameraBody             210Pb                          0.830              0               -999
+CameraBody             210Bi                          0.830              0               -999
+CameraBody             210Po                          0.830              0               -999
 ###Th232 chain                                       
-CameraBody             228Ac                          0.98707403           0               -999
-CameraBody             212Pb                          0.98707403           0               -999
-#CameraBody            212Bi                          0.98707403           0               -999
-CameraBody            208Tl                           0.35534665           0               -999
+CameraBody             232Th                          0.969           0               -999
+CameraBody             228Ra                          0.969           0               -999
+CameraBody             228Ac                          0.969           0               -999
+CameraBody             228Th                          0.969           0               -999
+CameraBody             224Ra                          0.969           0               -999
+CameraBody             220Rn                          0.969           0               -999
+CameraBody             216Po                          0.969           0               -999
+CameraBody             212Pb                          0.969           0               -999
+CameraBody             212Bi                          0.969           0               -999
+CameraBody             212Po                          0.620           0               -999
+CameraBody             208Tl                          0.349           0               -999
+#### U235 chain
+CameraBody             235U                           0.184           0               -999
+CameraBody             231Th                          0.184           0               -999
+CameraBody             231Pa                          0.184           0               -999
+CameraBody             227Ac                          0.184           0               -999
+CameraBody             227Th                          0.184           0               -999
+CameraBody             223Ra                          0.184           0               -999
+CameraBody             219Rn                          0.184           0               -999
+CameraBody             215Po                          0.184           0               -999
+CameraBody             211Pb                          0.184           0               -999
+CameraBody             211Bi                          0.184           0               -999
+CameraBody             207Tl                          0.184           0               -999
