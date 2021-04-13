@@ -58,6 +58,18 @@ if __name__ == '__main__':
   parser.add_argument("--tag", type=str, dest="tag", default="",
       help="Output directory name",
       )
+  parser.add_argument("--scaleGamma", type=float, dest="scaleGamma", default=1,
+      help="scale external gammas",
+      )
+  parser.add_argument("--scaleNeutron", type=float, dest="scaleNeutron", default=1,
+      help="scale external neutrons",
+      )
+  parser.add_argument("--scaleRad", type=float, dest="scaleRad", default=1,
+      help="scale all the backgrounds",
+      )
+  parser.add_argument("--scaleMass", type=float, dest="scaleMass", default=1,
+      help="scale all the backgrounds",
+      )
   
   args = parser.parse_args()
   print args 
@@ -108,6 +120,8 @@ if __name__ == '__main__':
   create_histodict_full(dict_bkg,dict_hbkg_full_NR,"h_edepDet_NR_full_norm")
   print("created full norm NR")
   #print(dict_hbkg)
+  
+
 
   i=0
   #for line in open(list_input):
@@ -123,6 +137,20 @@ if __name__ == '__main__':
   #      lab.append(os.path.basename(line.strip(".root\n").split("_")[0]))   
   for key in sorted(dict_hbkg, key = lambda key: dict_hbkg[key].Integral()):
     #print(key+"  "+str(i))
+    if key=="externalGamma":
+	dict_hbkg[key].Scale(1./args.scaleGamma)
+	dict_hbkg_full[key].Scale(1./args.scaleGamma)
+    elif key=="externalNeutron":
+	dict_hbkg[key].Scale(1./args.scaleNeutron)
+	dict_hbkg_full[key].Scale(1./args.scaleNeutron)
+    else:
+	dict_hbkg[key].Scale(1./args.scaleRad)
+	dict_hbkg_full[key].Scale(1./args.scaleRad)
+ 
+    ## scale for a different detector like CHINOTTO --> scale = 9./4.
+    dict_hbkg[key].Scale(1./args.scaleMass)
+    dict_hbkg_full[key].Scale(1./args.scaleMass)
+  
     lab.append(key)
     h.append(dict_hbkg[key])
     h_noNorm.append(dict_hbkg[key])
@@ -144,6 +172,22 @@ if __name__ == '__main__':
   i=0
   for key in sorted(dict_hbkg, key = lambda key: dict_hbkg_NR[key].Integral()):
     #print(key+"  "+str(i))
+    dict_hbkg_NR[key].SetName("hsum_"+key+"_NR")
+    dict_hbkg_full_NR[key].SetName("hsum_full_"+key+"_NR")
+    if key=="externalGamma":
+	dict_hbkg_NR[key].Scale(1./args.scaleGamma)
+	dict_hbkg_full_NR[key].Scale(1./args.scaleGamma)
+    elif key=="externalNeutron":
+	dict_hbkg_NR[key].Scale(1./args.scaleNeutron)
+	dict_hbkg_full_NR[key].Scale(1./args.scaleNeutron)
+    else:
+	dict_hbkg_NR[key].Scale(1./args.scaleRad)
+	dict_hbkg_full_NR[key].Scale(1./args.scaleRad)
+
+    ## scale for a different detector like  CHINOTTO
+    dict_hbkg_NR[key].Scale(1./args.scaleMass)
+    dict_hbkg_full_NR[key].Scale(1./args.scaleMass)
+
     labNR.append(key)
     h_NR.append(dict_hbkg_NR[key])
     h_full_NR.append(dict_hbkg_full_NR[key])
@@ -205,9 +249,11 @@ if __name__ == '__main__':
       #h_full_NR[i].SetLineColor(color[i])
       #h_full_NR[i].SetFillColor(color[i])
       #h[i].SetFillStyle(1001)
+      gStyle.SetPalette(57)
       leg.AddEntry(h[i],lab[i],"f")
       s.Add(h[i],"HIST")
       s_full.Add(h_full[i],"HIST")
+      gStyle.SetPalette(70)
       leg_NR.AddEntry(h_NR[i],labNR[i],"f")
       s_NR.Add(h_NR[i],"HIST")
       s_full_NR.Add(h_full_NR[i],"HIST")
@@ -228,11 +274,11 @@ if __name__ == '__main__':
   #s.Draw("")
   h_tot.Draw("hist same")
   h_tot_NR.Draw("hist same")
-  s.GetXaxis().SetTitle("Energy deposit [keV]")
+  s.GetXaxis().SetTitle("Energy deposit Tot [keV]")
   s.GetYaxis().SetTitle("Rate [cpd / kg / keV]")
   s.GetXaxis().SetRangeUser(0,30)
-  s.SetMinimum(1e-2)
-  s.SetMaximum(1e6)
+  s.SetMinimum(1e-3)
+  s.SetMaximum(1e5)
   leg.Draw()
   #c.SaveAs("Background_GEM_lowEne.pdf")
   #c.SaveAs("Background_AcrylicBox_lowEne.pdf")
@@ -266,7 +312,7 @@ if __name__ == '__main__':
   c_NR.SetLogy(1)
   s_NR.Draw("PFCPLC")
   #s_NR.Draw("")
-  s_NR.GetXaxis().SetTitle("Energy deposit [keV]")
+  s_NR.GetXaxis().SetTitle("Energy deposit NR [keV]")
   s_NR.GetYaxis().SetTitle("Rate [cpd / kg / keV]")
   s_NR.GetXaxis().SetRangeUser(0,30)
   s_NR.SetMinimum(1e-4)
@@ -293,3 +339,21 @@ if __name__ == '__main__':
   #c_NR.SaveAs("Background_GEM_NR.pdf")
   #c_NR.SaveAs("Background_AcrylicBox_NR.pdf")
   
+  fileout = TFile("plots/"+args.tag+"/Background_"+args.tag+".root","recreate")
+  fileout.cd()
+  h_tot.Write()
+  h_full_tot.Write()
+  h_tot_NR.Write()
+  h_full_tot_NR.Write()
+  for key in dict_hbkg:
+    dict_hbkg[key].Write()
+    dict_hbkg_full[key].Write()
+    dict_hbkg_NR[key].Write()
+    dict_hbkg_full_NR[key].Write()
+  
+  c.Write()
+  c_NR.Write()
+  
+  fileout.Close()
+
+ 

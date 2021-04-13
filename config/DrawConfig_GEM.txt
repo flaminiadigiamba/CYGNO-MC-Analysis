@@ -3,7 +3,6 @@ listfiles =
 	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/238U_RadioactiveDecayFromGEM.root
 	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/234Th_RadioactiveDecayFromGEM.root
 	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/234U_RadioactiveDecayFromGEM.root
-	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/234U_RadioactiveDecayFromGEM.root
 	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/222Rn_RadioactiveDecayFromGEM.root
 	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/218Po_RadioactiveDecayFromGEM.root
 	/storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-Analysis/output/GEM/214Pb_RadioactiveDecayFromGEM.root
