@@ -1,0 +1,11 @@
+universe   = vanilla
+executable = CYGNOAnalysis
+arguments = cygnoconf_14C
+log        = test.log
+output     = test.out
+error      = test.error
+getenv = True
+transfer_input_files = /jupyter-workspace/private/Simulation/CYGNO-MC-Analysis/CYGNOAnalysis, /jupyter-workspace/private/Simulation/CYGNO-MC-Analysis/config/cygnoconf_14C, /jupyter-workspace/private/Simulation/CYGNO-MC-Analysis/lists/list_TEST_14C_RadioactiveDecayFromGEMfoils.txt, /jupyter-workspace/private/Simulation/CYGNO-MC-build/14C_test.root
+transfer_output_files	= TEST_LIME_14C.root
++OWNER = "condor"
+queue
