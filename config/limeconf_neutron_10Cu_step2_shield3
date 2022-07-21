@@ -1,0 +1,11 @@
+CYGNO_gas_mass 0.068732424
+externalflux 1
+externalflux_value 2.66969e-06
+LIMEShield 1
+FromShield 3
+smearing 0
+ApplyCuts 0
+Cuts ((x_hits[0]>260.)&&(x_hits[0]<270.))||((x_hits[0]>-230.)&&(x_hits[0]<-190.))||(((x_hits[0]>-190.)&&(x_hits[0]<260.))&&(((z_hits[0]>-150.)&&(z_hits[0]<-140.)&&(y_hits[0]<130.)&&(y_hits[0]>-170.))||((z_hits[0]>140.)&&(z_hits[0]<150.)&&(y_hits[0]<130.)&&(y_hits[0]>-170.))||((y_hits[0]>-170.)&&(y_hits[0]<-160.)&&((z_hits[0]>=-140.)&&(z_hits[0]<=140.)))||((y_hits[0]>120.)&&(y_hits[0]<130.)&&((z_hits[0]>=-140.)&&(z_hits[0]<=140.)))))
+Particle neutron
+filelist lists/list_neutron_10Cu_step2_shield3_nocut.txt
+root_out lime_test_neutron_step2_shield3_nocut.root
