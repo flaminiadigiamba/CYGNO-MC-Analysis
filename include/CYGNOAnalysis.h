@@ -14,6 +14,7 @@
 #include <TString.h>
 #include <TCanvas.h>
 #include <TRandom.h>
+//#include "RooUnfoldResponse.h"
 
 using namespace std;
 
@@ -33,6 +34,11 @@ protected :
     Double_t _activity;
     Double_t _half_life;
     Double_t _externalflux_value;
+    Bool_t LIMEShield;
+    Bool_t applycuts;
+    string cuts;
+    string primary;
+    Double_t from_shield;
     Double_t _tot_shield_thickness;
     Double_t _shield0_thickness;
     Double_t _shield1_thickness;
@@ -64,7 +70,6 @@ protected :
     
     Double_t _normfull;
     Double_t _norm;
-   
 
     TRandom *factor;
     TTree *cygno_tree;
@@ -87,10 +92,16 @@ protected :
     TH1D *h_edepDet_full;
     TH1D *h_edepDet_full_norm;
     
+    TH1D *h_edepDet_full_cut;
+    TH1D *h_edepDet_full_norm_cut;
+    
     TH1D *h_edepDet_NR;
     TH1D *h_edepDet_NR_norm;
     TH1D *h_edepDet_NR_full;
     TH1D *h_edepDet_NR_full_norm;
+    
+    TH1D *h_edepDet_NR_full_cut;
+    TH1D *h_edepDet_NR_full_norm_cut;
     
     TH1D *h_EgammaShield0;
     TH1D *h_EgammaShield0_norm; 
@@ -220,6 +231,8 @@ protected :
     TH3D *h3_xyz_pos;
     TH3D *h3_xyz_pro;
     TH3D *h3_xyz_ion;
+
+    //RooUnfoldResponse* DetResp;
 
 public :
 

@@ -12,6 +12,7 @@
 #include <string>
 #include <list>
 #include <sstream>
+#include <TCut.h>
 
 using namespace std;
 
@@ -23,6 +24,9 @@ void CYGNOAnalysis::Config(string config_file){
     _CYGNO_gas_mass = Double_t (GetValue("CYGNO_gas_mass",config));
     _externalflux = Bool_t (GetValue("externalflux",config));
     _smearing = Bool_t (GetValue("smearing",config));
+    applycuts = Bool_t (GetValue("ApplyCuts",config));
+    cuts = string (GetStringValue("Cuts",config));
+    primary = string (GetStringValue("Particle",config));
     if (!_externalflux){
         _mass = Double_t (GetValue("mass",config));
         _activity = Double_t (GetValue("activity",config));
@@ -31,6 +35,8 @@ void CYGNOAnalysis::Config(string config_file){
     }    
     else{
         _externalflux_value = Double_t (GetValue("externalflux_value",config));
+        LIMEShield = Bool_t (GetValue("LIMEShield",config));
+        from_shield = Double_t (GetValue("FromShield",config));
         _shield0_thickness = Double_t (GetValue("shield0_thickness",config));
         _shield1_thickness = Double_t (GetValue("shield1_thickness",config));
         _shield2_thickness = Double_t (GetValue("shield2_thickness",config));
@@ -74,11 +80,17 @@ void CYGNOAnalysis::SetHistograms(){
     h_edepDet_norm = new TH1D("h_edepDet_norm","edepDet-norm",600,0,120);
     h_edepDet_full = new TH1D("h_edepDet_full","edepDet-full",600,0,3000);
     h_edepDet_full_norm = new TH1D("h_edepDet_full_norm","edepDet-full-norm",600,0,3000);
+    
+    h_edepDet_full_cut = new TH1D("h_edepDet_full_cut","edepDet-full-cut",600,0,3000);
+    h_edepDet_full_norm_cut = new TH1D("h_edepDet_full_norm_cut","edepDet-full-norm-cut",600,0,3000);
 
     h_edepDet_NR = new TH1D("h_edepDet_NR","edepDet_NR",600,0,120);
     h_edepDet_NR_norm = new TH1D("h_edepDet_NR_norm","edepDet_NR-norm",600,0,120);
     h_edepDet_NR_full = new TH1D("h_edepDet_NR_full","edepDet_NR-full",600,0,3000);
     h_edepDet_NR_full_norm = new TH1D("h_edepDet_NR_full_norm","edepDet_NR-full-norm",600,0,3000);
+    
+    h_edepDet_NR_full_cut = new TH1D("h_edepDet_NR_full_cut","edepDet_NR-full-cut",600,0,3000);
+    h_edepDet_NR_full_norm_cut = new TH1D("h_edepDet_NR_full_norm_cut","edepDet_NR-full-norm-cut",600,0,3000);
     
     h_EgammaShield0 = new TH1D("h_EgammaShield0","",600,0,120);
     h_EgammaShield0_norm = new TH1D("h_EgammaShield0_norm","",600,0,120);
@@ -205,10 +217,11 @@ void CYGNOAnalysis::SetHistograms(){
     h_E_pro_full = new TH1D("h_E_pro_full","",600,0,3000);
     h_E_pro_full_norm = new TH1D("h_E_pro_full_norm","",600,0,3000);
 
-    h3_xyz_ele = new TH3D("h3_xyx_ele","",100,-600,600,100,-600,600,100,-600,600);
+    /*h3_xyz_ele = new TH3D("h3_xyx_ele","",100,-600,600,100,-600,600,100,-600,600);
     h3_xyz_ele_fiducial = new TH3D("h3_xyx_ele_fiducial","",100,-600,600,100,-600,600,100,-600,600);
     h3_xyz_pos = new TH3D("h3_xyx_pos","",100,-600,600,100,-600,600,600,-600,600);
     h3_xyz_pro = new TH3D("h3_xyx_pro","",100,-600,600,100,-600,600,600,-600,600);
+    */
 
     h_NTot->Sumw2();
     h_NTotFlux0->Sumw2();
@@ -226,10 +239,16 @@ void CYGNOAnalysis::SetHistograms(){
     h_edepDet_full->Sumw2();
     h_edepDet_full_norm->Sumw2();
     
+    h_edepDet_full_cut->Sumw2();
+    h_edepDet_full_norm_cut->Sumw2();
+    
     h_edepDet_NR->Sumw2();
     h_edepDet_NR_norm->Sumw2();
     h_edepDet_NR_full->Sumw2();
     h_edepDet_NR_full_norm->Sumw2();
+    
+    h_edepDet_NR_full_cut->Sumw2();
+    h_edepDet_NR_full_norm_cut->Sumw2();
 
     h_EgammaShield0->Sumw2();
     h_EgammaShield0_norm->Sumw2(); 
@@ -399,6 +418,9 @@ void CYGNOAnalysis::Loop()
         TH1D *n_event_fluneutron2;
         TH1D *n_event_fluneutron3;
         TH1D *n_event_fluneutron_airbox;
+        
+        TH1D *h_temp_cut;
+        TH1D *h_temp_NR_cut;
                 
 	//	if ((fopen->IsOpen()==false) ||  (fopen->GetListOfKeys()->Contains("nT")==false)) continue; 
  	if ((fopen->GetListOfKeys()->Contains("nTuple")==false)) continue; 
@@ -421,7 +443,7 @@ void CYGNOAnalysis::Loop()
         
         flu0 = n_event_flu0->GetBinContent(2); //primaries entering the shielding0 once
         
-	gammaflu1 = 0 ; 
+	    gammaflu1 = 0 ; 
         gammaflu2 = 0 ;
         gammaflu3 = 0 ;
         gammaflu_airbox =0; 
@@ -429,7 +451,7 @@ void CYGNOAnalysis::Loop()
         //gammaflu2 = n_event_flugamma2->GetBinContent(2); //gammas entering the shielding2 once
         //gammaflu3 = n_event_flugamma3->GetBinContent(2); //gammas entering the shielding3 once
         //gammaflu_airbox = n_event_flugamma_airbox->GetBinContent(2); //gammas entering the airbox once
-        for (int j=1; j<=10; j++){
+        for (int j=1; j<=n_event_flugamma1->GetNbinsX(); j++){
             gammaflu1 += n_event_flugamma1->GetBinContent(j+1)*j; //gamma entering the shielding1 
             gammaflu2 += n_event_flugamma2->GetBinContent(j+1)*j; //gamma entering the shielding2 
             gammaflu3 += n_event_flugamma3->GetBinContent(j+1)*j; //gamma entering the shielding3 
@@ -444,12 +466,13 @@ void CYGNOAnalysis::Loop()
         neutronflu_airbox =0; 
         
         //FIXME : new structure
-        for (int j=1; j<=10; j++){
+        for (int j=1; j<=n_event_fluneutron1->GetNbinsX(); j++){
             neutronflu1 += n_event_fluneutron1->GetBinContent(j+1)*j; //neutrons entering the shielding1 
             neutronflu2 += n_event_fluneutron2->GetBinContent(j+1)*j; //neutrons entering the shielding2 
             neutronflu3 += n_event_fluneutron3->GetBinContent(j+1)*j; //neutrons entering the shielding3 
             neutronflu_airbox += n_event_fluneutron_airbox->GetBinContent(j+1)*j; //neutrons entering the airbox 
         }
+        
         _total_flux_events_flu0 += flu0;        
         cout << "flu0 = " << flu0 << endl;
         _total_flux_events_gammaflu1 += gammaflu1;        
@@ -469,20 +492,42 @@ void CYGNOAnalysis::Loop()
         _total_flux_events_neutronflu_airbox += neutronflu_airbox;        
         cout << "neutron flux airbox = " << neutronflu_airbox << endl;
 
-
+        
  
         mytree = (TTree*) fopen->Get("nTuple");
-        this->Init(mytree);
+        this->Init(mytree);        
         
         nentries = mytree->GetEntriesFast();
         cout<<"Found file "<<*my_file_iter<<" Entries = "<<mytree->GetEntries()<<"  Events = "<<events<<" Total = "<<_total_events<<endl;
 	
 	TBranch* br = (TBranch*)mytree->GetListOfBranches()->FindObject("E_flu");
-        cout << br << endl;
+        //cout << br << endl;
+       
+        /////////CUTS///////
+        if(applycuts){
+            std::cout<<"APPLYING CUTS: "<<cuts<<std::endl;
+            int nbins = h_edepDet_full->GetNbinsX();
+            float xmin = h_edepDet_full->GetXaxis()->GetBinLowEdge(1);
+            float xmax = h_edepDet_full->GetXaxis()->GetBinUpEdge(h_edepDet_full->GetNbinsX());
+            string val = Form("energyDep>>h_temp_cut(%d,%f,%f)",nbins,xmin,xmax);
+            string valNR = Form("energyDep_NR>>h_temp_cut_NR(%d,%f,%f)",nbins,xmin,xmax);
+            TCut cut_e = "energyDep>0.";
+            TCut cut_eNR = "energyDep_NR>0.";
+            mytree->Draw(val.c_str(),cut_e+cuts.c_str(),"goff");
+            mytree->Draw(valNR.c_str(),cut_eNR+cuts.c_str(),"goff");
+            h_temp_cut = (TH1D*)gDirectory->Get("h_temp_cut")->Clone("h_temp_cut");
+            h_temp_NR_cut = (TH1D*)gDirectory->Get("h_temp_cut_NR")->Clone("h_temp_NR_cut");
+            h_edepDet_full_cut->Add(h_temp_cut);
+            h_edepDet_full_norm_cut->Add(h_temp_cut);
+            h_edepDet_NR_full_cut->Add(h_temp_NR_cut);
+            h_edepDet_NR_full_norm_cut->Add(h_temp_NR_cut);
+            h_temp_cut->Reset();
+            h_temp_NR_cut->Reset();
+        }
         
         for (Long64_t jentry=0; jentry<nentries;jentry++) { //loop on entries
             
-            if(jentry %1000000 == 0){cout<<"Event N. "<<jentry<<endl;}
+            if(jentry %10000 == 0){cout<<"Event N. "<<jentry<<endl;}
             
             //nb = mytree->GetEntry(jentry);  //load the full entry of the tree (slow)
             
@@ -491,21 +536,21 @@ void CYGNOAnalysis::Loop()
             b_numflu0->GetEntry(jentry);
             //FIXME : _flu branches + NR
             b_energyDep_NR->GetEntry(jentry);
-            ////if (br){ 
-	    //  b_E_flu->GetEntry(jentry);
-            //  if (E_flu->size()==0)
-	    //      continue;
+            if (br){ 
+	          b_E_flu->GetEntry(jentry);
+              if (E_flu->size()==0)
+	          continue;
 
             //  b_trackid_flu->GetEntry(jentry);
-            //  b_volNo_flu->GetEntry(jentry);
-            //  b_prestepVolNo_flu->GetEntry(jentry);
-            //  b_pdg_flu->GetEntry(jentry);
+              b_volNo_flu->GetEntry(jentry);
+              b_prestepVolNo_flu->GetEntry(jentry);
+              b_pdg_flu->GetEntry(jentry);
             //  //b_poststepx_flu->GetEntry(jentry);
             //  //b_poststepy_flu->GetEntry(jentry);
             //  //b_poststepz_flu->GetEntry(jentry);
-            //  b_px_flu->GetEntry(jentry);
-            //  b_py_flu->GetEntry(jentry);
-            //  b_pz_flu->GetEntry(jentry);
+              b_px_flu->GetEntry(jentry);
+              b_py_flu->GetEntry(jentry);
+              b_pz_flu->GetEntry(jentry);
             //  b_E_ele->GetEntry(jentry);
             //  b_parentid_ele->GetEntry(jentry);
             //  b_trackid_ele->GetEntry(jentry);
@@ -525,7 +570,18 @@ void CYGNOAnalysis::Loop()
             //  //b_posy_ion->GetEntry(jentry);
             //  //b_posz_ion->GetEntry(jentry);
 	    //  //
-	    ////}//if branch 
+	    }//if branch 
+                
+/*b_numflugamma1->GetEntry(jentry);
+b_numflugamma2->GetEntry(jentry);
+b_numflugamma3->GetEntry(jentry);
+b_numflugamma_airbox->GetEntry(jentry);
+b_numfluneutron1->GetEntry(jentry);
+b_numfluneutron2->GetEntry(jentry);
+b_numfluneutron3->GetEntry(jentry);
+b_numfluneutron_airbox->GetEntry(jentry);
+*/
+
             if(_smearing == true){
                 this->Smearing();
             }
@@ -534,129 +590,131 @@ void CYGNOAnalysis::Loop()
 	    
             //FIXME : _flu branches
             //All
-            ////if (br){
-	    //  for (int iflu=0; iflu < E_flu->size(); iflu++){ 
+            
+            if (br){
+                
+	      for (int iflu=0; iflu < E_flu->size(); iflu++){ 
 
-            //          if(prestepVolNo_flu->at(iflu) ==2 && volNo_flu->at(iflu)==3 && pdg_flu->at(iflu)==22){
-            //              h_EgammaShield0->Fill(E_flu->at(iflu));
-            //              h_EgammaShield0_norm->Fill(E_flu->at(iflu)); 
-            //              h_EgammaShield0_full->Fill(E_flu->at(iflu));    
-            //              h_EgammaShield0_full_norm->Fill(E_flu->at(iflu));
-            //              h_GammaThetaShield0->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
-            //              phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
-            //              if (phi<0) phi = phi+2*TMath::Pi();
-            //              h_GammaPhiShield0->Fill(phi);
+                      if(prestepVolNo_flu->at(iflu) ==2 && volNo_flu->at(iflu)==3 && pdg_flu->at(iflu)==22){
+                          h_EgammaShield0->Fill(E_flu->at(iflu));
+                          h_EgammaShield0_norm->Fill(E_flu->at(iflu)); 
+                          h_EgammaShield0_full->Fill(E_flu->at(iflu));    
+                          h_EgammaShield0_full_norm->Fill(E_flu->at(iflu));
+                          h_GammaThetaShield0->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+                          phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+                          if (phi<0) phi = phi+2*TMath::Pi();
+                          h_GammaPhiShield0->Fill(phi);
 	    //    	  //cout << "phi = " << acos(-px_flu->at(iflu)*sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu))) << endl;
-            //          }
-            //          if(prestepVolNo_flu->at(iflu) ==3 && volNo_flu->at(iflu)==4 && pdg_flu->at(iflu)==22){
-            //              h_EgammaShield1->Fill(E_flu->at(iflu));
-            //              h_EgammaShield1_norm->Fill(E_flu->at(iflu)); 
-            //              h_EgammaShield1_full->Fill(E_flu->at(iflu));    
-            //              h_EgammaShield1_full_norm->Fill(E_flu->at(iflu));
-            //              h_GammaThetaShield1->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
-            //              phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
-            //              if (phi<0) phi = phi+2*TMath::Pi();
-            //              h_GammaPhiShield1->Fill(phi);
-            //              ////h_PhiShield1->Fill(atan2(py_flu->at(iflu)/px_flu->at(iflu)));
-            //              ////Phi defined between -pi and pi
-            //          }
+                      }
+                      if(prestepVolNo_flu->at(iflu) ==3 && volNo_flu->at(iflu)==4 && pdg_flu->at(iflu)==22){
+                          h_EgammaShield1->Fill(E_flu->at(iflu));
+                          h_EgammaShield1_norm->Fill(E_flu->at(iflu)); 
+                          h_EgammaShield1_full->Fill(E_flu->at(iflu));    
+                          h_EgammaShield1_full_norm->Fill(E_flu->at(iflu));
+                          h_GammaThetaShield1->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+                          phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+                          if (phi<0) phi = phi+2*TMath::Pi();
+                          h_GammaPhiShield1->Fill(phi);
+                          ////h_PhiShield1->Fill(atan2(py_flu->at(iflu)/px_flu->at(iflu)));
+                          ////Phi defined between -pi and pi
+                      }
             //              
-            //          if(prestepVolNo_flu->at(iflu) ==4 && volNo_flu->at(iflu)==5 && pdg_flu->at(iflu)==22){
-            //              h_EgammaShield2->Fill(E_flu->at(iflu));
-            //              h_EgammaShield2_norm->Fill(E_flu->at(iflu)); 
-            //              h_EgammaShield2_full->Fill(E_flu->at(iflu));    
-            //              h_EgammaShield2_full_norm->Fill(E_flu->at(iflu));
-            //              h_GammaThetaShield2->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
-            //              phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
-            //              if (phi<0) phi = phi+2*TMath::Pi();
-            //              h_GammaPhiShield2->Fill(phi);
-            //          }
+                      if(prestepVolNo_flu->at(iflu) ==4 && volNo_flu->at(iflu)==5 && pdg_flu->at(iflu)==22){
+                          h_EgammaShield2->Fill(E_flu->at(iflu));
+                          h_EgammaShield2_norm->Fill(E_flu->at(iflu)); 
+                          h_EgammaShield2_full->Fill(E_flu->at(iflu));    
+                          h_EgammaShield2_full_norm->Fill(E_flu->at(iflu));
+                          h_GammaThetaShield2->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+                          phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+                          if (phi<0) phi = phi+2*TMath::Pi();
+                          h_GammaPhiShield2->Fill(phi);
+                      }
         
-            //          if(prestepVolNo_flu->at(iflu) ==5 && volNo_flu->at(iflu)==6 && pdg_flu->at(iflu)==22){
-            //              h_EgammaShield3->Fill(E_flu->at(iflu));
-            //              h_EgammaShield3_norm->Fill(E_flu->at(iflu)); 
-            //              h_EgammaShield3_full->Fill(E_flu->at(iflu));    
-            //              h_EgammaShield3_full_norm->Fill(E_flu->at(iflu));
-            //              h_GammaThetaShield3->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
-            //              phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
-            //              if (phi<0) phi = phi+2*TMath::Pi();
-            //              h_GammaPhiShield3->Fill(phi);
-            //          }
+                      if(prestepVolNo_flu->at(iflu) ==5 && volNo_flu->at(iflu)==6 && pdg_flu->at(iflu)==22){
+                          h_EgammaShield3->Fill(E_flu->at(iflu));
+                          h_EgammaShield3_norm->Fill(E_flu->at(iflu)); 
+                          h_EgammaShield3_full->Fill(E_flu->at(iflu));    
+                          h_EgammaShield3_full_norm->Fill(E_flu->at(iflu));
+                          h_GammaThetaShield3->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+                          phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+                          if (phi<0) phi = phi+2*TMath::Pi();
+                          h_GammaPhiShield3->Fill(phi);
+                      }
         
-            //          if(prestepVolNo_flu->at(iflu) ==6 && volNo_flu->at(iflu)==7 && pdg_flu->at(iflu)==22){
-            //              h_EgammaAirBox->Fill(E_flu->at(iflu));
-            //              h_EgammaAirBox_norm->Fill(E_flu->at(iflu));
-            //              h_EgammaAirBox_full->Fill(E_flu->at(iflu));
-            //              h_EgammaAirBox_full_norm->Fill(E_flu->at(iflu));
-            //              h_GammaThetaAirBox->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
-            //              phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
-            //              if (phi<0) phi = phi+2*TMath::Pi();
-            //              h_GammaPhiAirBox->Fill(phi);
-            //          }
+                        if(prestepVolNo_flu->at(iflu) ==6 && volNo_flu->at(iflu)==7 && pdg_flu->at(iflu)==22){
+                          h_EgammaAirBox->Fill(E_flu->at(iflu));
+                          h_EgammaAirBox_norm->Fill(E_flu->at(iflu));
+                          h_EgammaAirBox_full->Fill(E_flu->at(iflu));
+                          h_EgammaAirBox_full_norm->Fill(E_flu->at(iflu));
+                          h_GammaThetaAirBox->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+                          phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+                          if (phi<0) phi = phi+2*TMath::Pi();
+                          h_GammaPhiAirBox->Fill(phi);
+                      }
         
-            //          if(prestepVolNo_flu->at(iflu) ==6 && volNo_flu->at(iflu)==7){
-            //              h_EallAirBox->Fill(E_flu->at(iflu));
-            //              h_EallAirBox_norm->Fill(E_flu->at(iflu));
-            //              h_EallAirBox_full->Fill(E_flu->at(iflu));
-            //              h_EallAirBox_full_norm->Fill(E_flu->at(iflu));
-            //          }
+                      if(prestepVolNo_flu->at(iflu) ==6 && volNo_flu->at(iflu)==7){
+                          h_EallAirBox->Fill(E_flu->at(iflu));
+                          h_EallAirBox_norm->Fill(E_flu->at(iflu));
+                          h_EallAirBox_full->Fill(E_flu->at(iflu));
+                          h_EallAirBox_full_norm->Fill(E_flu->at(iflu));
+                      }
         
-            //          if(prestepVolNo_flu->at(iflu) ==2 && volNo_flu->at(iflu)==3 && pdg_flu->at(iflu)==2112){
-            //              h_EneutronShield0->Fill(E_flu->at(iflu)-939565.36);
-            //              h_EneutronShield0_norm->Fill(E_flu->at(iflu)-939565.36); 
-            //              h_EneutronShield0_full->Fill(E_flu->at(iflu)-939565.36);    
-            //              h_EneutronShield0_full_norm->Fill(E_flu->at(iflu)-939565.36);
-            //              h_NeutronThetaShield0->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
-            //              phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
-            //              if (phi<0) phi = phi+2*TMath::Pi();
-            //              h_NeutronPhiShield0->Fill(phi);
-            //          }
-            //          if(prestepVolNo_flu->at(iflu) ==3 && volNo_flu->at(iflu)==4 && pdg_flu->at(iflu)==2112){
-            //              h_EneutronShield1->Fill(E_flu->at(iflu)-939565.36);
-            //              h_EneutronShield1_norm->Fill(E_flu->at(iflu)-939565.36); 
-            //              h_EneutronShield1_full->Fill(E_flu->at(iflu)-939565.36);    
-            //              h_EneutronShield1_full_norm->Fill(E_flu->at(iflu)-939565.36);
-            //              h_NeutronThetaShield1->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
-            //              phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
-            //              if (phi<0) phi = phi+2*TMath::Pi();
-            //              h_NeutronPhiShield1->Fill(phi);
-            //          }
-            //              
-            //          if(prestepVolNo_flu->at(iflu) ==4 && volNo_flu->at(iflu)==5 && pdg_flu->at(iflu)==2112){
-            //              h_EneutronShield2->Fill(E_flu->at(iflu)-939565.36);
-            //              h_EneutronShield2_norm->Fill(E_flu->at(iflu)-939565.36); 
-            //              h_EneutronShield2_full->Fill(E_flu->at(iflu)-939565.36);    
-            //              h_EneutronShield2_full_norm->Fill(E_flu->at(iflu)-939565.36);
-            //              h_NeutronThetaShield2->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
-            //              phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
-            //              if (phi<0) phi = phi+2*TMath::Pi();
-            //              h_NeutronPhiShield2->Fill(phi);
-            //          }
+                      if(prestepVolNo_flu->at(iflu) ==2 && volNo_flu->at(iflu)==3 && pdg_flu->at(iflu)==2112){
+                          h_EneutronShield0->Fill(E_flu->at(iflu)-939565.36);
+                          h_EneutronShield0_norm->Fill(E_flu->at(iflu)-939565.36); 
+                          h_EneutronShield0_full->Fill(E_flu->at(iflu)-939565.36);    
+                          h_EneutronShield0_full_norm->Fill(E_flu->at(iflu)-939565.36);
+                          h_NeutronThetaShield0->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+                          phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+                          if (phi<0) phi = phi+2*TMath::Pi();
+                          h_NeutronPhiShield0->Fill(phi);
+                      }
+                      if(prestepVolNo_flu->at(iflu) ==3 && volNo_flu->at(iflu)==4 && pdg_flu->at(iflu)==2112){
+                          h_EneutronShield1->Fill(E_flu->at(iflu)-939565.36);
+                          h_EneutronShield1_norm->Fill(E_flu->at(iflu)-939565.36); 
+                          h_EneutronShield1_full->Fill(E_flu->at(iflu)-939565.36);    
+                          h_EneutronShield1_full_norm->Fill(E_flu->at(iflu)-939565.36);
+                          h_NeutronThetaShield1->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+                          phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+                          if (phi<0) phi = phi+2*TMath::Pi();
+                          h_NeutronPhiShield1->Fill(phi);
+                      }
+                          
+                      if(prestepVolNo_flu->at(iflu) ==4 && volNo_flu->at(iflu)==5 && pdg_flu->at(iflu)==2112){
+                          h_EneutronShield2->Fill(E_flu->at(iflu)-939565.36);
+                          h_EneutronShield2_norm->Fill(E_flu->at(iflu)-939565.36); 
+                          h_EneutronShield2_full->Fill(E_flu->at(iflu)-939565.36);    
+                          h_EneutronShield2_full_norm->Fill(E_flu->at(iflu)-939565.36);
+                          h_NeutronThetaShield2->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+                          phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+                          if (phi<0) phi = phi+2*TMath::Pi();
+                          h_NeutronPhiShield2->Fill(phi);
+                      }
         
-            //          if(prestepVolNo_flu->at(iflu) ==5 && volNo_flu->at(iflu)==6 && pdg_flu->at(iflu)==2112){
-            //              h_EneutronShield3->Fill(E_flu->at(iflu)-939565.36);
-            //              h_EneutronShield3_norm->Fill(E_flu->at(iflu)-939565.36); 
-            //              h_EneutronShield3_full->Fill(E_flu->at(iflu)-939565.36);    
-            //              h_EneutronShield3_full_norm->Fill(E_flu->at(iflu)-939565.36);
-            //              h_NeutronThetaShield3->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
-            //              phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
-            //              if (phi<0) phi = phi+2*TMath::Pi();
-            //              h_NeutronPhiShield3->Fill(phi);
-            //          }
+                      if(prestepVolNo_flu->at(iflu) ==5 && volNo_flu->at(iflu)==6 && pdg_flu->at(iflu)==2112){ 
+                          h_EneutronShield3->Fill(E_flu->at(iflu)-939565.36);
+                          h_EneutronShield3_norm->Fill(E_flu->at(iflu)-939565.36); 
+                          h_EneutronShield3_full->Fill(E_flu->at(iflu)-939565.36);    
+                          h_EneutronShield3_full_norm->Fill(E_flu->at(iflu)-939565.36);
+                          h_NeutronThetaShield3->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+                          phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+                          if (phi<0) phi = phi+2*TMath::Pi();
+                          h_NeutronPhiShield3->Fill(phi);
+                      }
         
-            //          if(prestepVolNo_flu->at(iflu) ==6 && volNo_flu->at(iflu)==7 && pdg_flu->at(iflu)==2112){
-            //              h_EneutronAirBox->Fill(E_flu->at(iflu)-939565.36);
-            //              h_EneutronAirBox_norm->Fill(E_flu->at(iflu)-939565.36);
-            //              h_EneutronAirBox_full->Fill(E_flu->at(iflu)-939565.36);
-            //              h_EneutronAirBox_full_norm->Fill(E_flu->at(iflu)-939565.36);
-            //              h_NeutronThetaAirBox->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
-            //              phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
-            //              if (phi<0) phi = phi+2*TMath::Pi();
-            //              h_NeutronPhiAirBox->Fill(phi);
-            //          }
+                        if(prestepVolNo_flu->at(iflu) ==6 && volNo_flu->at(iflu)==7 && pdg_flu->at(iflu)==2112){
+                          h_EneutronAirBox->Fill(E_flu->at(iflu)-939565.36);
+                          h_EneutronAirBox_norm->Fill(E_flu->at(iflu)-939565.36);
+                          h_EneutronAirBox_full->Fill(E_flu->at(iflu)-939565.36);
+                          h_EneutronAirBox_full_norm->Fill(E_flu->at(iflu)-939565.36);
+                          h_NeutronThetaAirBox->Fill(acos(-pz_flu->at(iflu)/sqrt(px_flu->at(iflu)*px_flu->at(iflu)+py_flu->at(iflu)*py_flu->at(iflu)+pz_flu->at(iflu)*pz_flu->at(iflu))));
+                          phi = atan2(-py_flu->at(iflu),-px_flu->at(iflu));
+                          if (phi<0) phi = phi+2*TMath::Pi();
+                          h_NeutronPhiAirBox->Fill(phi);
+                      }
         
-            //    }
-            // 
+                }
+             
             // //FIXME : double counting ??
             // for (int iele = 0; iele < E_ele->size(); iele++){
             //         Bool_t doublecount = false;
@@ -686,7 +744,21 @@ void CYGNOAnalysis::Loop()
               //for (int iion = 0; iion < E_ion->size(); iion++){
 	      //        h3_xyz_ion->Fill(posx_ion->at(iion),posy_ion->at(iion),posz_ion->at(iion));	
               //}
-	    //}  //end if branch exist
+              
+	    }  //end if branch exist
+              
+/*        _total_flux_events_flu0 += numflu0;        
+        _total_flux_events_gammaflu1 += numflugamma1;        
+        _total_flux_events_gammaflu2 += numflugamma2;        
+        _total_flux_events_gammaflu3 += numflugamma3;        
+        _total_flux_events_gammaflu_airbox += numflugamma_airbox;        
+        _total_flux_events_neutronflu1 += numfluneutron1;        
+        _total_flux_events_neutronflu2 += numfluneutron2;
+        _total_flux_events_neutronflu3 += numfluneutron3;
+        _total_flux_events_neutronflu_airbox += numfluneutron_airbox;
+*/
+
+                
               if(energyDep >0.){
                   h_edepDet->Fill(energyDep);
                   h_edepDet_norm->Fill(energyDep);
@@ -700,16 +772,18 @@ void CYGNOAnalysis::Loop()
                       h_edepDet_NR_full->Fill(energyDep_NR);
                       h_edepDet_NR_full_norm->Fill(energyDep_NR);
                     }
-	      }	
+              }	
               if (_externalflux){
                  if (numflu0>0)
               	_total_flux_events_flu0_test += numflu0;
              }    
+            
 	} //end loop on entries
         
 	delete mytree;
         delete fopen;
         //delete n_event_gen;
+        
     } //end loop on files
     
     h_NTot->SetBinContent(1,_total_events);
@@ -763,16 +837,108 @@ void CYGNOAnalysis::Normalize(){
     Double_t norm_flu2, norm_flu2_full;
     Double_t norm_flu3, norm_flu3_full;
     Double_t norm_flu_airbox, norm_flu_airbox_full;
-    Double_t surface_Shield0, surface_Shield1, surface_Shield2, surface_Shield3, surface_AirBox;
+    Double_t surface_Shield0, surface_Shield1, surface_Shield2, surface_Shield3, surface_AirBox, surface_start_shield;
+    Double_t total_primary_events;
    
     //FIXME CYGNO 
-    Double_t AirBox_x = 1.45;
-    Double_t AirBox_y = 1.45;
-    Double_t AirBox_z = 2.65; //here x and z swiped wrt CYGNODetectorConstruction 
+    //Double_t AirBox_x = 1.45;
+    //Double_t AirBox_y = 1.45;
+    //Double_t AirBox_z = 2.65; //here x and z swiped wrt CYGNODetectorConstruction 
     //FIXME LIME
-    //Double_t AirBox_x = 0.8;
-    //Double_t AirBox_y = 0.8;
+    //Double_t AirBox_x = 0.8; 
+    //Double_t AirBox_y = 0.8; 
     //Double_t AirBox_z = 2; //here x and z swiped wrt CYGNODetectorConstruction 
+    
+    //LIME with CAD shileding
+    Double_t AirBox_x = 0.55; 
+    Double_t AirBox_y = 0.6; 
+    Double_t AirBox_z = 1.1; //here x and z swiped wrt CYGNODetectorConstruction 
+    
+    //Shieldings surfaces in m^2
+    if(!LIMEShield){
+        surface_Shield0 = (2*(AirBox_x+2*_tot_shield_thickness)*(AirBox_y+2*_tot_shield_thickness) + 2*(AirBox_y+2*_tot_shield_thickness)*(AirBox_z+2*_tot_shield_thickness)+2*(AirBox_x+2*_tot_shield_thickness)*(AirBox_z+2*_tot_shield_thickness)); 
+        
+        surface_Shield1 = (2*(AirBox_x+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness))*(AirBox_y+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness)) + 2*(AirBox_y+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness))*(AirBox_z+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness))+2*(AirBox_x+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness))*(AirBox_z+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness))); 
+        
+        surface_Shield2 = (2*(AirBox_x+2*(_shield3_thickness+_shield2_thickness))*(AirBox_y+2*(_shield3_thickness+_shield2_thickness)) + 2*(AirBox_y+2*(_shield3_thickness+_shield2_thickness))*(AirBox_z+2*(_shield3_thickness+_shield2_thickness))+2*(AirBox_x+2*(_shield3_thickness+_shield2_thickness))*(AirBox_z+2*(_shield3_thickness+_shield2_thickness))); 
+        
+        surface_Shield3 = (2*(AirBox_x+2*(_shield3_thickness))*(AirBox_y+2*(_shield3_thickness)) + 2*(AirBox_y+2*(_shield3_thickness))*(AirBox_z+2*(_shield3_thickness))+2*(AirBox_x+2*(_shield3_thickness))*(AirBox_z+2*(_shield3_thickness))); 
+        
+        surface_AirBox = 2*AirBox_x*AirBox_y + 4*AirBox_y*AirBox_z; 
+        
+        surface_start_shield = surface_Shield0;
+        total_primary_events = _total_flux_events_flu0;
+        std::cout<<"OLD GEOMETRY"<<std::endl;
+        }
+    else {
+        surface_Shield0 = 32.4736;
+        surface_Shield1 = 31.9144;
+        surface_Shield2 = 31.36;
+        surface_Shield3 = 8.265;
+        surface_AirBox = 3.19;
+        if(from_shield<0){
+            surface_start_shield = surface_Shield0;
+            total_primary_events = _total_flux_events_flu0;
+            std::cout<<"NEW GEOMETRY\n FROM OUTSIDE SPHERE: "<<total_primary_events<<", total events "<<_total_events<<std::endl;
+          }
+        else{ 
+            if(primary=="gamma") {
+                if (from_shield==0)  {
+                    surface_start_shield = surface_Shield0; 
+                    total_primary_events = _total_flux_events_flu0;
+                    std::cout<<"NEW GEOMETRY\n GAMMAS FROM SHIELD 0: "<<total_primary_events<<", total events "<<_total_events<<std::endl;
+                }
+                else if (from_shield==1)  {
+                    surface_start_shield = surface_Shield1; 
+                    total_primary_events = _total_flux_events_gammaflu1;
+                    std::cout<<"NEW GEOMETRY\n GAMMAS FROM SHIELD 1: "<<total_primary_events<<", total events "<<_total_events<<std::endl;
+                }
+                else if (from_shield==2)  {
+                    surface_start_shield = surface_Shield2; 
+                    total_primary_events = _total_flux_events_gammaflu2;
+                    std::cout<<"NEW GEOMETRY\n GAMMAS FROM SHIELD 2: "<<total_primary_events<<", total events "<<_total_events<<std::endl;
+                }
+                else if (from_shield==3)  {
+                    surface_start_shield = surface_Shield3; 
+                    total_primary_events = _total_flux_events_gammaflu3;
+                    std::cout<<"NEW GEOMETRY\n GAMMAS FROM SHIELD 3: "<<total_primary_events<<", total events "<<_total_events<<std::endl;
+                }
+                else if (from_shield==4)  {
+                    surface_start_shield = surface_AirBox;
+                    total_primary_events = _total_flux_events_gammaflu_airbox;
+                    std::cout<<"NEW GEOMETRY\n GAMMAS FROM AIRBOX: "<<total_primary_events<<", total events "<<_total_events<<std::endl;
+                }
+            }
+            else if (primary=="neutron"){
+                if (from_shield==0)  {
+                    surface_start_shield = surface_Shield0; 
+                    total_primary_events = _total_flux_events_flu0;
+                    std::cout<<"NEW GEOMETRY\n NEUTRONS FROM SHIELD 0: "<<total_primary_events<<", total events "<<_total_events<<std::endl;
+                }
+                else if (from_shield==1)  {
+                    surface_start_shield = surface_Shield1; 
+                    total_primary_events = _total_flux_events_neutronflu1;
+                    std::cout<<"NEW GEOMETRY\n NEUTRONS FROM SHIELD 1: "<<total_primary_events<<", total events "<<_total_events<<std::endl;
+                }
+                else if (from_shield==2)  {
+                    surface_start_shield = surface_Shield2; 
+                    total_primary_events = _total_flux_events_neutronflu2;
+                    std::cout<<"NEW GEOMETRY\n NEUTRONS FROM SHIELD 2: "<<total_primary_events<<", total events "<<_total_events<<std::endl;
+                }
+                else if (from_shield==3)  {
+                    surface_start_shield = surface_Shield3; 
+                    total_primary_events = _total_flux_events_neutronflu3;
+                    std::cout<<"NEW GEOMETRY\n NEUTRONS FROM SHIELD 3: "<<total_primary_events<<", total events "<<_total_events<<std::endl;
+                }
+                else if (from_shield==4)  {
+                    surface_start_shield = surface_AirBox;
+                    total_primary_events = _total_flux_events_neutronflu_airbox;
+                    std::cout<<"NEW GEOMETRY\n NEUTRONS FROM AIRBOX: "<<total_primary_events<<", total events "<<_total_events<<std::endl;
+                }
+
+            }
+          }
+        }
      
     Double_t ndays;
     if (!_externalflux){
@@ -780,9 +946,9 @@ void CYGNOAnalysis::Normalize(){
       ndays = _total_events/ndec1d;
     }
     else{
-      Double_t nflu_1d = _externalflux_value * (2*(AirBox_x+2*_tot_shield_thickness)*(AirBox_y+2*_tot_shield_thickness) + 4*(AirBox_y+2*_tot_shield_thickness)*(AirBox_z+2*_tot_shield_thickness)) * 10000. * 86400.;
-      //ndays = _total_flux_events/ nflu_1d;
-      ndays = _total_flux_events_flu0/ nflu_1d;
+      Double_t nflu_1d = _externalflux_value * surface_start_shield * 10000. * 86400.;
+      //ndays = _total_flux_events_flu0/ nflu_1d;
+      ndays = total_primary_events/ nflu_1d;
     } 
 
     std::cout << "Equivalent time of this simulation: " << ndays << " days" << std::endl;
@@ -796,6 +962,8 @@ void CYGNOAnalysis::Normalize(){
     normfull = 1./(ndays*binwitdh_full*_CYGNO_gas_mass);
     h_edepDet_full_norm->Scale(normfull);
     h_edepDet_NR_full_norm->Scale(normfull);
+    h_edepDet_full_norm_cut->Scale(normfull);
+    h_edepDet_NR_full_norm_cut->Scale(normfull);
     //normalized to cpd/kg/keV
 
     cout << "norm = " << norm << "   normfull = " << normfull  << "   binwidth = " << binwitdh << " CYGNO_gas_mass = " << _CYGNO_gas_mass << "  ndays = " <<ndays << endl;
@@ -803,9 +971,10 @@ void CYGNOAnalysis::Normalize(){
     _norm  = norm;
     _normfull  = normfull;
 
-    surface_Shield0 =(2*(AirBox_x+2*_tot_shield_thickness)*(AirBox_y+2*_tot_shield_thickness) + 4*(AirBox_y+2*_tot_shield_thickness)*(AirBox_z+2*_tot_shield_thickness)); 
-    //norm_flu0 = _externalflux_value * 10000. * surface_Shield0 / h_EgammaShield0->GetEntries();  
-    norm_flu0 = _externalflux_value * 10000. * surface_Shield0 / _total_flux_events_flu0;  
+    //surface_Shield0 =(2*(AirBox_x+2*_tot_shield_thickness)*(AirBox_y+2*_tot_shield_thickness) + 4*(AirBox_y+2*_tot_shield_thickness)*(AirBox_z+2*_tot_shield_thickness)); 
+    ////norm_flu0 = _externalflux_value * 10000. * surface_Shield0 / h_EgammaShield0->GetEntries();  
+    //norm_flu0 = _externalflux_value * 10000. * surface_Shield0 / _total_flux_events_flu0;  
+    norm_flu0 = _externalflux_value * 10000. * surface_start_shield / total_primary_events; //!!!! 
     double binwidth = h_EgammaShield0_norm->GetBinWidth(1);
     double binwidth_full = h_EgammaShield0_full_norm->GetBinWidth(1);
     
@@ -835,12 +1004,12 @@ void CYGNOAnalysis::Normalize(){
     //h_EallAirBox_full_norm->Scale(normfull);
     ////normalized to cts/sec
 
-    surface_Shield1 =(2*(AirBox_x+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness))*(AirBox_y+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness)) + 4*(AirBox_y+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness))*(AirBox_z+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness)));
-    surface_Shield2 =  (2*(AirBox_x+2*(_shield3_thickness+_shield2_thickness))*(AirBox_y+2*(_shield3_thickness+_shield2_thickness)) + 4*(AirBox_y+2*(_shield3_thickness+_shield2_thickness))*(AirBox_z+2*(_shield3_thickness+_shield2_thickness))); 
+    //surface_Shield1 =(2*(AirBox_x+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness))*(AirBox_y+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness)) + 4*(AirBox_y+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness))*(AirBox_z+2*(_shield3_thickness+_shield2_thickness+_shield1_thickness)));
+    //surface_Shield2 =  (2*(AirBox_x+2*(_shield3_thickness+_shield2_thickness))*(AirBox_y+2*(_shield3_thickness+_shield2_thickness)) + 4*(AirBox_y+2*(_shield3_thickness+_shield2_thickness))*(AirBox_z+2*(_shield3_thickness+_shield2_thickness))); 
 
-    surface_Shield3 = (2*(AirBox_x+2*_shield3_thickness)*(AirBox_y+2*_shield3_thickness) + 4*(AirBox_y+2*_shield3_thickness)*(AirBox_z+2*_shield3_thickness)); 
+    //surface_Shield3 = (2*(AirBox_x+2*_shield3_thickness)*(AirBox_y+2*_shield3_thickness) + 4*(AirBox_y+2*_shield3_thickness)*(AirBox_z+2*_shield3_thickness)); 
 
-    surface_AirBox  = 2*AirBox_x*AirBox_y + 4*AirBox_y*AirBox_z; 
+    //surface_AirBox  = 2*AirBox_x*AirBox_y + 4*AirBox_y*AirBox_z; 
     
 
     h_EgammaShield1_norm->Scale(norm_flu0/surface_Shield1/1.e4/binwidth); 
@@ -852,16 +1021,16 @@ void CYGNOAnalysis::Normalize(){
     h_EgammaAirBox_norm->Scale(norm_flu0/surface_AirBox/1.e4/binwidth); 
     h_EgammaAirBox_full_norm->Scale(norm_flu0/surface_AirBox/1.e4/binwidth_full);
     //normalized to cts/cm^2/sec/keV
-    h_EgammaShield0_norm->GetYaxis()->SetTitle("Flux [#gamma cm^{-2} s^{-1} keV^{-1}")      ; 
-    h_EgammaShield0_full_norm->GetYaxis()->SetTitle("Flux [#gamma cm^{-2} s^{-1} keV^{-1}") ;
-    h_EgammaShield1_norm->GetYaxis()->SetTitle("Flux [#gamma cm^{-2} s^{-1} keV^{-1}")      ;
-    h_EgammaShield1_full_norm->GetYaxis()->SetTitle("Flux [#gamma cm^{-2} s^{-1} keV^{-1}") ;
-    h_EgammaShield2_norm->GetYaxis()->SetTitle("Flux [#gamma cm^{-2} s^{-1} keV^{-1}")      ; 
-    h_EgammaShield2_full_norm->GetYaxis()->SetTitle("Flux [#gamma cm^{-2} s^{-1} keV^{-1}") ; 
-    h_EgammaShield3_norm->GetYaxis()->SetTitle("Flux [#gamma cm^{-2} s^{-1} keV^{-1}")      ;
-    h_EgammaShield3_full_norm->GetYaxis()->SetTitle("Flux [#gamma cm^{-2} s^{-1} keV^{-1}") ; 
-    h_EgammaAirBox_norm->GetYaxis()->SetTitle("Flux [#gamma cm^{-2} s^{-1} keV^{-1}")       ;
-    h_EgammaAirBox_full_norm->GetYaxis()->SetTitle("Flux [#gamma cm^{-2} s^{-1} keV^{-1}")  ;
+    h_EgammaShield0_norm->GetYaxis()->SetTitle("Flux [#gamma cm^{-2} s^{-1} keV^{-1}]")      ; 
+    h_EgammaShield0_full_norm->GetYaxis()->SetTitle("Flux [#gamma cm^{-2} s^{-1} keV^{-1}]") ;
+    h_EgammaShield1_norm->GetYaxis()->SetTitle("Flux [#gamma cm^{-2} s^{-1} keV^{-1}]")      ;
+    h_EgammaShield1_full_norm->GetYaxis()->SetTitle("Flux [#gamma cm^{-2} s^{-1} keV^{-1}]") ;
+    h_EgammaShield2_norm->GetYaxis()->SetTitle("Flux [#gamma cm^{-2} s^{-1} keV^{-1}]")      ; 
+    h_EgammaShield2_full_norm->GetYaxis()->SetTitle("Flux [#gamma cm^{-2} s^{-1} keV^{-1}]") ; 
+    h_EgammaShield3_norm->GetYaxis()->SetTitle("Flux [#gamma cm^{-2} s^{-1} keV^{-1}]")      ;
+    h_EgammaShield3_full_norm->GetYaxis()->SetTitle("Flux [#gamma cm^{-2} s^{-1} keV^{-1}]") ; 
+    h_EgammaAirBox_norm->GetYaxis()->SetTitle("Flux [#gamma cm^{-2} s^{-1} keV^{-1}]")       ;
+    h_EgammaAirBox_full_norm->GetYaxis()->SetTitle("Flux [#gamma cm^{-2} s^{-1} keV^{-1}]")  ;
 
     //cout << "Gamma Flux entering Shield0 " << h_EgammaShield0_full_norm->Integral()*binwidth_full << " cm^-2 s^-1" << endl;
     //cout << "Gamma Flux entering Shield1 " << h_EgammaShield1_full_norm->Integral()*binwidth_full << " cm^-2 s^-1" << endl;
@@ -888,16 +1057,16 @@ void CYGNOAnalysis::Normalize(){
     h_EneutronAirBox_norm->Scale(norm_flu0/surface_AirBox/1.e4); 
     h_EneutronAirBox_full_norm->Scale(norm_flu0/surface_AirBox/1.e4);
     //normalized to cts/cm^2/sec/keV
-    h_EneutronShield0_norm->GetYaxis()->SetTitle("Flux [n cm^{-2} s^{-1}")       ;
-    h_EneutronShield0_full_norm->GetYaxis()->SetTitle("Flux [n cm^{-2} s^{-1}")  ;
-    h_EneutronShield1_norm->GetYaxis()->SetTitle("Flux [n cm^{-2} s^{-1}")       ;
-    h_EneutronShield1_full_norm->GetYaxis()->SetTitle("Flux [n cm^{-2} s^{-1}")  ;
-    h_EneutronShield2_norm->GetYaxis()->SetTitle("Flux [n cm^{-2} s^{-1}")       ;
-    h_EneutronShield2_full_norm->GetYaxis()->SetTitle("Flux [n cm^{-2} s^{-1}")  ;
-    h_EneutronShield3_norm->GetYaxis()->SetTitle("Flux [n cm^{-2} s^{-1}")       ;
-    h_EneutronShield3_full_norm->GetYaxis()->SetTitle("Flux [n cm^{-2} s^{-1}")  ;
-    h_EneutronAirBox_norm->GetYaxis()->SetTitle("Flux [n cm^{-2} s^{-1}")        ;
-    h_EneutronAirBox_full_norm->GetYaxis()->SetTitle("Flux [n cm^{-2} s^{-1}")   ;
+    h_EneutronShield0_norm->GetYaxis()->SetTitle("Flux [n cm^{-2} s^{-1}]")       ;
+    h_EneutronShield0_full_norm->GetYaxis()->SetTitle("Flux [n cm^{-2} s^{-1}]")  ;
+    h_EneutronShield1_norm->GetYaxis()->SetTitle("Flux [n cm^{-2} s^{-1}]")       ;
+    h_EneutronShield1_full_norm->GetYaxis()->SetTitle("Flux [n cm^{-2} s^{-1}]")  ;
+    h_EneutronShield2_norm->GetYaxis()->SetTitle("Flux [n cm^{-2} s^{-1}]")       ;
+    h_EneutronShield2_full_norm->GetYaxis()->SetTitle("Flux [n cm^{-2} s^{-1}]")  ;
+    h_EneutronShield3_norm->GetYaxis()->SetTitle("Flux [n cm^{-2} s^{-1}]")       ;
+    h_EneutronShield3_full_norm->GetYaxis()->SetTitle("Flux [n cm^{-2} s^{-1}]")  ;
+    h_EneutronAirBox_norm->GetYaxis()->SetTitle("Flux [n cm^{-2} s^{-1}]")        ;
+    h_EneutronAirBox_full_norm->GetYaxis()->SetTitle("Flux [n cm^{-2} s^{-1}]")   ;
 
     //cout << "Neutron Flux entering Shield0 " << h_EneutronShield0_full_norm->Integral() << " cm^-2 s^-1" << endl;
     //cout << "Neutron Flux entering Shield1 " << h_EneutronShield1_full_norm->Integral() << " cm^-2 s^-1" << endl;
@@ -947,6 +1116,20 @@ void CYGNOAnalysis::ComputeBKG(){
     cout <<"Number of events in [1-20] keV : " <<  _bkg_cpd_kg_kev << " +/- " << _bkg_cpd_kg_kev_err  << " cpd/kg/keV" << endl;
     cout <<"Number of events in [1-20] keV : " <<  _bkg_cpd_kg*_CYGNO_gas_mass*365 << " +/- " << _bkg_cpd_kg_err*_CYGNO_gas_mass*365  << " evts/yr" << endl;
    
+    binmin = h_edepDet_full->FindBin(0.);
+    binmax = h_edepDet_full->GetNbinsX(); //last bin for full range rate
+
+    int_counts = h_edepDet_full->Integral(binmin,binmax);
+    _bkg_cpd_kg = int_counts*_normfull*h_edepDet_full->GetBinWidth(1);
+    _bkg_cpd_kg_err = sqrt(int_counts)*_normfull*h_edepDet_full->GetBinWidth(1);
+    
+    interval = (h_edepDet_full->GetXaxis()->GetBinUpEdge(binmax))  - h_edepDet_full->GetBinLowEdge(binmin);
+    _bkg_cpd_kg_kev = _bkg_cpd_kg/interval;
+    _bkg_cpd_kg_kev_err = _bkg_cpd_kg_err/interval;
+
+    cout <<"Number of events in the whole range [" << h_edepDet_full->GetBinLowEdge(binmin) <<"-"<< h_edepDet_full->GetXaxis()->GetBinUpEdge(binmax)  << "] keV : " <<  _bkg_cpd_kg_kev << " +/- " << _bkg_cpd_kg_kev_err  << " cpd/kg/keV" << endl;
+     cout <<"Number of events in the whole range [" << h_edepDet_full->GetBinLowEdge(binmin) <<"-"<< h_edepDet_full->GetXaxis()->GetBinUpEdge(binmax)  << "] keV : " <<  _bkg_cpd_kg*_CYGNO_gas_mass*365 << " +/- " << _bkg_cpd_kg_err*_CYGNO_gas_mass*365  << " evts/yr" << endl;
+
 
     //nuclear recoils
     binmin = h_edepDet_NR->FindBin(0.);
@@ -973,5 +1156,33 @@ void CYGNOAnalysis::ComputeBKG(){
     
     cout <<"Number of NR in [1-20] keV : " <<  _bkg_cpd_kg_kev_NR << " +/- " << _bkg_cpd_kg_kev_NR_err  << " cpd/kg/keV" << endl;
     cout <<"Number of NR in [1-20] keV : " <<  _bkg_cpd_kg_NR*_CYGNO_gas_mass*365 << " +/- " << _bkg_cpd_kg_NR_err*_CYGNO_gas_mass*365  << " evts/yr" << endl;
+    
+    //nuclear recoils - whole energy range
+
+    binmin = h_edepDet_NR_full->FindBin(0.);
+    binmax = h_edepDet_NR_full->GetNbinsX();
+    
+    int_counts = h_edepDet_NR_full->Integral(binmin,binmax);
+    _bkg_cpd_kg_NR = int_counts*_normfull*h_edepDet_NR_full->GetBinWidth(1); //corresponds to h_edepDet_NR_full_norm->Integral()
+    _bkg_cpd_kg_NR_err = sqrt(int_counts)*_normfull*h_edepDet_NR_full->GetBinWidth(1);
+    
+    interval = (h_edepDet_NR_full->GetXaxis()->GetBinUpEdge(binmax))  - h_edepDet_NR_full->GetBinLowEdge(binmin);
+    _bkg_cpd_kg_kev_NR = _bkg_cpd_kg_NR/interval;
+    _bkg_cpd_kg_kev_NR_err = _bkg_cpd_kg_NR_err/interval;
+    
+    cout <<"Number of NR in the whole range [" << h_edepDet_NR_full->GetBinLowEdge(binmin) <<"-"<< h_edepDet_NR_full->GetXaxis()->GetBinUpEdge(binmax)  << "] keV : " <<  _bkg_cpd_kg_kev_NR << " +/- " << _bkg_cpd_kg_kev_NR_err  << " cpd/kg/keV" << endl;
+    cout <<"Number of NR in the whole range [" << h_edepDet_NR_full->GetBinLowEdge(binmin) <<"-"<< h_edepDet_NR_full->GetXaxis()->GetBinUpEdge(binmax)  << "] keV : " <<  _bkg_cpd_kg_NR*_CYGNO_gas_mass*365 << " +/- " << _bkg_cpd_kg_NR_err*_CYGNO_gas_mass*365  << " evts/yr" << endl;
+    binmin = h_edepDet_NR_full->FindBin(1.);
+    int_counts = h_edepDet_NR_full->Integral(binmin,binmax);
+    _bkg_cpd_kg_NR = int_counts*_normfull*h_edepDet_NR->GetBinWidth(1);
+    _bkg_cpd_kg_NR_err = sqrt(int_counts)*_normfull*h_edepDet_NR->GetBinWidth(1);
+    
+    interval = (h_edepDet_NR_full->GetXaxis()->GetBinUpEdge(binmax))  - h_edepDet_NR_full->GetBinLowEdge(binmin);
+    _bkg_cpd_kg_kev_NR = _bkg_cpd_kg_NR/interval;
+    _bkg_cpd_kg_kev_NR_err = _bkg_cpd_kg_NR_err/interval;
+    
+    //cout <<"Number of NR > 1 keV : " <<  _bkg_cpd_kg_kev_NR << " +/- " << _bkg_cpd_kg_kev_NR_err  << " cpd/kg/keV" << endl;
+    //cout <<"Number of NR > 1 keV : " <<  _bkg_cpd_kg_NR*_CYGNO_gas_mass*365 << " +/- " << _bkg_cpd_kg_NR_err*_CYGNO_gas_mass*365  << " evts/yr" << endl;
+
     
 }

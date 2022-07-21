@@ -76,6 +76,37 @@ inline float GetValue(TString variable,const char* filename){
   return val;
 } 
 
+inline TString GetStringValue(TString variable,const char* filename){
+//   if(filename!=0)
+//     cout << "ThreebodyApp::GetValue: reading value from file "<< filename << endl;
+  ifstream setfile(filename);
+  string val;
+  if(!setfile.good()){
+    cout << "ERROR in ThreebodyApp::GetValue "
+	 << "unable to open the file " << filename << endl;
+  }
+  else {
+    string var;
+    bool anyfound(false);
+    while(1){
+      setfile>>var>>val;
+      if (!setfile.good()) break;
+      if(var==variable){
+	anyfound=true;
+	cout << " Search for " << variable << " found " << var 
+             << " = " << val << endl;
+	break;
+      }
+    }
+    if(!anyfound) {cout<<"warning!!: I didn't find "<<variable<<"...setting it to -999"<<endl;
+      val = "1";    
+    }
+  }
+  setfile.close();
+  return val;
+} 
+
+
 inline TString GetFileName(TString variable,const char* filename){
   ifstream setfile(filename);
   TString val("");
