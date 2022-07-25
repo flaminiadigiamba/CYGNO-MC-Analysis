@@ -1,0 +1,10 @@
+CYGNO_gas_mass 0.068732424
+externalflux 1
+externalflux_value 2.766e-6
+LIMEShield 1
+FromShield -1
+ApplyCuts 0
+smearing 0
+Particle neutron
+filelist lists/list_neutron_10Cu.txt
+root_out neutron_10Cu.root

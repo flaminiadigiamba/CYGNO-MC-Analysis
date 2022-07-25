@@ -1,0 +1,8 @@
+CYGNO_gas_mass 0.068732424
+externalflux 0
+LIMEShield 1
+FromShield -1
+ApplyCuts 0
+smearing 0
+filelist lists/list_camera_10Cu.txt
+root_out camera_10Cu.root
