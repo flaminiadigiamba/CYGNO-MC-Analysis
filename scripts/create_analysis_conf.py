@@ -1,6 +1,12 @@
 import os, sys
 from optparse import OptionParser
 
+#example:
+#python3 scripts/create_analysis_conf.py -i /jupyter-workspace/private/Simulation/CYGNO-MC-Analysis/config/inputconf_CameraBody -t LIME_CADshield_10Cu_camera_cuts -o /jupyter-workspace/cloud-storage/cygno-sim/LIME_MC_data/LIME_CADshield_camera_10Cu/ -c 'x_hits[0]<270.'
+
+#with the cuts, a histogram will be filled with only the events satisfying that condition
+#use the variables in the nTuple from MC simulation (e.g. x_hits[0] interaction point of events along drift direction)
+
 activities = {}
 massdict = {'DetectorBody':26.743101,
            'LIMEinternalStructure':8.1656306,
@@ -13,7 +19,9 @@ massdict = {'DetectorBody':26.743101,
            'Cathode':1.6498523,
            'FieldRings':11.826861,
            'LIMEResistors':0.054339129,
-           'CopperShielding10cm':4508.8901}
+           'CopperShielding10cm':4508.8901,
+            'CopperShielding4cm':2475.0283,
+           'CopperShielding4cm':1582.8206}
 
 def query_yes_no():
     yes = set(['yes','y'])
@@ -67,7 +75,7 @@ def WriteLists():
         os.system("mkdir -p %s/"%(listpath))
         for key in activities:
             if not key=='part':
-                filename=listpath+'/list_{tag}_{part}_{isotope}'.format(tag=options.tag, part=activities['part'], isotope=key)
+                filename=listpath+'/list_{tag}_{isotope}.list'.format(tag=options.tag, isotope=key)
                 #file = open(filename)
                 os.system('find {outpath} -name "{isotope}*.root" > {listfile}'.format(outpath=options.simout, isotope=key, listfile=filename))
         
@@ -98,7 +106,7 @@ def WriteConfig():
     
     for key in activities:
         if not key=='part': 
-            file = open('config/{tag}/conf_{tag}_{part}_{isotope}'.format(tag=options.tag, part=activities['part'], isotope=key),'w')
+            file = open('config/{tag}/conf_{tag}_{isotope}'.format(tag=options.tag, isotope=key),'w')
             file.write('externalflux 0\n')
             file.write('CYGNO_gas_mass 0.068732424\n')
             file.write('LIMEShield 1\n')
@@ -110,11 +118,18 @@ def WriteConfig():
             else: 
                 file.write('ApplyCuts 1\n')
                 file.write('Cuts {cut}\n'.format(cut=options.cuts))
-            file.write('filelist {lists}\n'.format(lists='lists/'+options.tag+'/list_{tag}_{part}_{isotope}'.format(tag=options.tag, part=activities['part'], isotope=key)))
-            file.write('root_out output/{tag}/{tag}_{part}_{isotope}.root'.format(tag=options.tag, part=activities['part'], isotope=key))
+            file.write('filelist {lists}\n'.format(lists='lists/'+options.tag+'/list_{tag}_{isotope}.list'.format(tag=options.tag, isotope=key)))
+            file.write('root_out output/{tag}/{tag}_{isotope}.root'.format(tag=options.tag, isotope=key))
             file.close()
             
-            
+    
+def RunAnalysis(tag):
+    configpath = 'config/%s'%(tag)
+    outputpath = 'output/%s'%(tag)
+    for config in os.listdir(configpath):
+        if config.startswith('conf'): os.system('./CYGNOAnalysis {cpath}/{conf} > {opath}/{oname}.out'.format(cpath=configpath, conf=config, opath=outputpath, oname=config.split('/')[-1][5:]))
+        
+        
 options = parseInputArgs()
 readInput(options.input)
 WriteLists()

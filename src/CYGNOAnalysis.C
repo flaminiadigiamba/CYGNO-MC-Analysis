@@ -27,6 +27,8 @@ void CYGNOAnalysis::Config(string config_file){
     applycuts = Bool_t (GetValue("ApplyCuts",config));
     cuts = string (GetStringValue("Cuts",config));
     primary = string (GetStringValue("Particle",config));
+    LIMEShield = Bool_t (GetValue("LIMEShield",config));
+    from_shield = Double_t (GetValue("FromShield",config));
     if (!_externalflux){
         _mass = Double_t (GetValue("mass",config));
         _activity = Double_t (GetValue("activity",config));
@@ -35,8 +37,6 @@ void CYGNOAnalysis::Config(string config_file){
     }    
     else{
         _externalflux_value = Double_t (GetValue("externalflux_value",config));
-        LIMEShield = Bool_t (GetValue("LIMEShield",config));
-        from_shield = Double_t (GetValue("FromShield",config));
         _shield0_thickness = Double_t (GetValue("shield0_thickness",config));
         _shield1_thickness = Double_t (GetValue("shield1_thickness",config));
         _shield2_thickness = Double_t (GetValue("shield2_thickness",config));
@@ -81,6 +81,8 @@ void CYGNOAnalysis::SetHistograms(){
     h_edepDet_full = new TH1D("h_edepDet_full","edepDet-full",600,0,3000);
     h_edepDet_full_norm = new TH1D("h_edepDet_full_norm","edepDet-full-norm",600,0,3000);
     
+    h_edepDet_cut = new TH1D("h_edepDet_cut","edepDet_cut",600,0,120);
+    h_edepDet_norm_cut = new TH1D("h_edepDet_norm_cut","edepDet-norm-cut",600,0,120);
     h_edepDet_full_cut = new TH1D("h_edepDet_full_cut","edepDet-full-cut",600,0,3000);
     h_edepDet_full_norm_cut = new TH1D("h_edepDet_full_norm_cut","edepDet-full-norm-cut",600,0,3000);
 
@@ -89,6 +91,8 @@ void CYGNOAnalysis::SetHistograms(){
     h_edepDet_NR_full = new TH1D("h_edepDet_NR_full","edepDet_NR-full",600,0,3000);
     h_edepDet_NR_full_norm = new TH1D("h_edepDet_NR_full_norm","edepDet_NR-full-norm",600,0,3000);
     
+    h_edepDet_NR_cut = new TH1D("h_edepDet_NR_cut","edepDet_NR_cut",600,0,120);
+    h_edepDet_NR_norm_cut = new TH1D("h_edepDet_NR_norm_cut","edepDet_NR-norm-cut",600,0,120);
     h_edepDet_NR_full_cut = new TH1D("h_edepDet_NR_full_cut","edepDet_NR-full-cut",600,0,3000);
     h_edepDet_NR_full_norm_cut = new TH1D("h_edepDet_NR_full_norm_cut","edepDet_NR-full-norm-cut",600,0,3000);
     
@@ -239,6 +243,8 @@ void CYGNOAnalysis::SetHistograms(){
     h_edepDet_full->Sumw2();
     h_edepDet_full_norm->Sumw2();
     
+    h_edepDet_cut->Sumw2();
+    h_edepDet_norm_cut->Sumw2();
     h_edepDet_full_cut->Sumw2();
     h_edepDet_full_norm_cut->Sumw2();
     
@@ -247,6 +253,8 @@ void CYGNOAnalysis::SetHistograms(){
     h_edepDet_NR_full->Sumw2();
     h_edepDet_NR_full_norm->Sumw2();
     
+    h_edepDet_NR_cut->Sumw2();
+    h_edepDet_NR_norm_cut->Sumw2();
     h_edepDet_NR_full_cut->Sumw2();
     h_edepDet_NR_full_norm_cut->Sumw2();
 
@@ -419,6 +427,8 @@ void CYGNOAnalysis::Loop()
         TH1D *n_event_fluneutron3;
         TH1D *n_event_fluneutron_airbox;
         
+        TH1D *h_temp_full_cut;
+        TH1D *h_temp_full_NR_cut;
         TH1D *h_temp_cut;
         TH1D *h_temp_NR_cut;
                 
@@ -451,7 +461,7 @@ void CYGNOAnalysis::Loop()
         //gammaflu2 = n_event_flugamma2->GetBinContent(2); //gammas entering the shielding2 once
         //gammaflu3 = n_event_flugamma3->GetBinContent(2); //gammas entering the shielding3 once
         //gammaflu_airbox = n_event_flugamma_airbox->GetBinContent(2); //gammas entering the airbox once
-        for (int j=1; j<=n_event_flugamma1->GetNbinsX(); j++){
+        for (int j=1; j<=n_event_gen->GetNbinsX(); j++){
             gammaflu1 += n_event_flugamma1->GetBinContent(j+1)*j; //gamma entering the shielding1 
             gammaflu2 += n_event_flugamma2->GetBinContent(j+1)*j; //gamma entering the shielding2 
             gammaflu3 += n_event_flugamma3->GetBinContent(j+1)*j; //gamma entering the shielding3 
@@ -466,7 +476,7 @@ void CYGNOAnalysis::Loop()
         neutronflu_airbox =0; 
         
         //FIXME : new structure
-        for (int j=1; j<=n_event_fluneutron1->GetNbinsX(); j++){
+        for (int j=1; j<=n_event_gen->GetNbinsX(); j++){
             neutronflu1 += n_event_fluneutron1->GetBinContent(j+1)*j; //neutrons entering the shielding1 
             neutronflu2 += n_event_fluneutron2->GetBinContent(j+1)*j; //neutrons entering the shielding2 
             neutronflu3 += n_event_fluneutron3->GetBinContent(j+1)*j; //neutrons entering the shielding3 
@@ -499,28 +509,48 @@ void CYGNOAnalysis::Loop()
         
         nentries = mytree->GetEntriesFast();
         cout<<"Found file "<<*my_file_iter<<" Entries = "<<mytree->GetEntries()<<"  Events = "<<events<<" Total = "<<_total_events<<endl;
-	
+	if (nentries==0) continue;
 	TBranch* br = (TBranch*)mytree->GetListOfBranches()->FindObject("E_flu");
         //cout << br << endl;
        
         /////////CUTS///////
         if(applycuts){
             std::cout<<"APPLYING CUTS: "<<cuts<<std::endl;
+            //full range histograms
             int nbins = h_edepDet_full->GetNbinsX();
             float xmin = h_edepDet_full->GetXaxis()->GetBinLowEdge(1);
             float xmax = h_edepDet_full->GetXaxis()->GetBinUpEdge(h_edepDet_full->GetNbinsX());
-            string val = Form("energyDep>>h_temp_cut(%d,%f,%f)",nbins,xmin,xmax);
-            string valNR = Form("energyDep_NR>>h_temp_cut_NR(%d,%f,%f)",nbins,xmin,xmax);
+            string val = Form("energyDep>>h_temp_full_cut(%d,%f,%f)",nbins,xmin,xmax);
+            string valNR = Form("energyDep_NR>>h_temp_full_cut_NR(%d,%f,%f)",nbins,xmin,xmax);
             TCut cut_e = "energyDep>0.";
             TCut cut_eNR = "energyDep_NR>0.";
             mytree->Draw(val.c_str(),cut_e+cuts.c_str(),"goff");
             mytree->Draw(valNR.c_str(),cut_eNR+cuts.c_str(),"goff");
+            h_temp_full_cut = (TH1D*)gDirectory->Get("h_temp_full_cut")->Clone("h_temp_full_cut");
+            h_temp_full_NR_cut = (TH1D*)gDirectory->Get("h_temp_full_cut_NR")->Clone("h_temp_full_NR_cut");
+            h_edepDet_full_cut->Add(h_temp_full_cut);
+            h_edepDet_full_norm_cut->Add(h_temp_full_cut);
+            h_edepDet_NR_full_cut->Add(h_temp_full_NR_cut);
+            h_edepDet_NR_full_norm_cut->Add(h_temp_full_NR_cut);
+            h_temp_full_cut->Reset();
+            h_temp_full_NR_cut->Reset();
+            
+            //low energy histograms
+            nbins = h_edepDet->GetNbinsX();
+            xmin = h_edepDet->GetXaxis()->GetBinLowEdge(1);
+            xmax = h_edepDet->GetXaxis()->GetBinUpEdge(h_edepDet->GetNbinsX());
+            val = Form("energyDep>>h_temp_cut(%d,%f,%f)",nbins,xmin,xmax);
+            valNR = Form("energyDep_NR>>h_temp_cut_NR(%d,%f,%f)",nbins,xmin,xmax);
+            cut_e = "energyDep>0.";
+            cut_eNR = "energyDep_NR>0.";
+            mytree->Draw(val.c_str(),cut_e+cuts.c_str(),"goff");
+            mytree->Draw(valNR.c_str(),cut_eNR+cuts.c_str(),"goff");
             h_temp_cut = (TH1D*)gDirectory->Get("h_temp_cut")->Clone("h_temp_cut");
             h_temp_NR_cut = (TH1D*)gDirectory->Get("h_temp_cut_NR")->Clone("h_temp_NR_cut");
-            h_edepDet_full_cut->Add(h_temp_cut);
-            h_edepDet_full_norm_cut->Add(h_temp_cut);
-            h_edepDet_NR_full_cut->Add(h_temp_NR_cut);
-            h_edepDet_NR_full_norm_cut->Add(h_temp_NR_cut);
+            h_edepDet_cut->Add(h_temp_cut);
+            h_edepDet_norm_cut->Add(h_temp_cut);
+            h_edepDet_NR_cut->Add(h_temp_NR_cut);
+            h_edepDet_NR_norm_cut->Add(h_temp_NR_cut);
             h_temp_cut->Reset();
             h_temp_NR_cut->Reset();
         }
@@ -528,7 +558,6 @@ void CYGNOAnalysis::Loop()
         for (Long64_t jentry=0; jentry<nentries;jentry++) { //loop on entries
             
             if(jentry %10000 == 0){cout<<"Event N. "<<jentry<<endl;}
-            
             //nb = mytree->GetEntry(jentry);  //load the full entry of the tree (slow)
             
             //load only some branches ( faster !)
@@ -572,14 +601,27 @@ void CYGNOAnalysis::Loop()
 	    //  //
 	    }//if branch 
                 
-/*b_numflugamma1->GetEntry(jentry);
-b_numflugamma2->GetEntry(jentry);
-b_numflugamma3->GetEntry(jentry);
-b_numflugamma_airbox->GetEntry(jentry);
-b_numfluneutron1->GetEntry(jentry);
-b_numfluneutron2->GetEntry(jentry);
-b_numfluneutron3->GetEntry(jentry);
-b_numfluneutron_airbox->GetEntry(jentry);
+/*     //vale solo se cutoutfile=0
+        b_numflugamma1->GetEntry(jentry);
+        b_numflugamma2->GetEntry(jentry);
+        b_numflugamma3->GetEntry(jentry);
+        b_numflugamma_airbox->GetEntry(jentry);
+        b_numfluneutron1->GetEntry(jentry);
+        b_numfluneutron2->GetEntry(jentry);
+        b_numfluneutron3->GetEntry(jentry);
+        b_numfluneutron_airbox->GetEntry(jentry);
+
+              
+        _total_flux_events_flu0 += numflu0;        
+        _total_flux_events_gammaflu1 += numflugamma1;        
+        _total_flux_events_gammaflu2 += numflugamma2;        
+        _total_flux_events_gammaflu3 += numflugamma3;        
+        _total_flux_events_gammaflu_airbox += numflugamma_airbox;        
+        _total_flux_events_neutronflu1 += numfluneutron1;        
+        _total_flux_events_neutronflu2 += numfluneutron2;
+        _total_flux_events_neutronflu3 += numfluneutron3;
+        _total_flux_events_neutronflu_airbox += numfluneutron_airbox;
+
 */
 
             if(_smearing == true){
@@ -746,17 +788,7 @@ b_numfluneutron_airbox->GetEntry(jentry);
               //}
               
 	    }  //end if branch exist
-              
-/*        _total_flux_events_flu0 += numflu0;        
-        _total_flux_events_gammaflu1 += numflugamma1;        
-        _total_flux_events_gammaflu2 += numflugamma2;        
-        _total_flux_events_gammaflu3 += numflugamma3;        
-        _total_flux_events_gammaflu_airbox += numflugamma_airbox;        
-        _total_flux_events_neutronflu1 += numfluneutron1;        
-        _total_flux_events_neutronflu2 += numfluneutron2;
-        _total_flux_events_neutronflu3 += numfluneutron3;
-        _total_flux_events_neutronflu_airbox += numfluneutron_airbox;
-*/
+
 
                 
               if(energyDep >0.){
@@ -905,7 +937,8 @@ void CYGNOAnalysis::Normalize(){
                 }
                 else if (from_shield==4)  {
                     surface_start_shield = surface_AirBox;
-                    total_primary_events = _total_flux_events_gammaflu_airbox;
+                    //total_primary_events = _total_flux_events_gammaflu_airbox;
+                    total_primary_events = _total_events; //!!! ALL GENERATED EVENTS ARE CONSIDERED, SINCE IN THE SIMULATION FROM THE OUTSIDE SPHERE WE TOOK THE DISTRIBUTION OF ALL THE EVENTS THAT PASSED THE SHIELD
                     std::cout<<"NEW GEOMETRY\n GAMMAS FROM AIRBOX: "<<total_primary_events<<", total events "<<_total_events<<std::endl;
                 }
             }
@@ -932,7 +965,8 @@ void CYGNOAnalysis::Normalize(){
                 }
                 else if (from_shield==4)  {
                     surface_start_shield = surface_AirBox;
-                    total_primary_events = _total_flux_events_neutronflu_airbox;
+                    //total_primary_events = _total_flux_events_neutronflu_airbox;
+                    total_primary_events = _total_events;  //!!! ALL GENERATED EVENTS ARE CONSIDERED, SINCE IN THE SIMULATION FROM THE OUTSIDE SPHERE WE TOOK THE DISTRIBUTION OF ALL THE EVENTS THAT PASSED THE SHIELD
                     std::cout<<"NEW GEOMETRY\n NEUTRONS FROM AIRBOX: "<<total_primary_events<<", total events "<<_total_events<<std::endl;
                 }
 
@@ -943,6 +977,7 @@ void CYGNOAnalysis::Normalize(){
     Double_t ndays;
     if (!_externalflux){
       Double_t ndec1d = _activity*86400*_mass;
+        std::cout<<_total_events<<" "<<_activity<<" "<<_mass<<std::endl;
       ndays = _total_events/ndec1d;
     }
     else{
@@ -956,6 +991,8 @@ void CYGNOAnalysis::Normalize(){
     norm = 1./(ndays*binwitdh*_CYGNO_gas_mass);
     h_edepDet_norm->Scale(norm);
     h_edepDet_NR_norm->Scale(norm);
+    h_edepDet_norm_cut->Scale(norm);
+    h_edepDet_NR_norm_cut->Scale(norm);
     //normalized to cpd/kg/keV
 
     binwitdh_full = h_edepDet_full_norm->GetBinWidth(1);

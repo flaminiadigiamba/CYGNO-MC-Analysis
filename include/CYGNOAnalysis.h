@@ -91,7 +91,9 @@ protected :
     TH1D *h_edepDet_norm;
     TH1D *h_edepDet_full;
     TH1D *h_edepDet_full_norm;
-    
+
+    TH1D *h_edepDet_cut;
+    TH1D *h_edepDet_norm_cut;
     TH1D *h_edepDet_full_cut;
     TH1D *h_edepDet_full_norm_cut;
     
@@ -99,7 +101,9 @@ protected :
     TH1D *h_edepDet_NR_norm;
     TH1D *h_edepDet_NR_full;
     TH1D *h_edepDet_NR_full_norm;
-    
+
+    TH1D *h_edepDet_NR_cut;
+    TH1D *h_edepDet_NR_norm_cut;
     TH1D *h_edepDet_NR_full_cut;
     TH1D *h_edepDet_NR_full_norm_cut;
     
